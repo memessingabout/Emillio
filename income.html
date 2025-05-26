@@ -1,0 +1,1666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BudgetTrack - Income</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+    body {
+      background-color: #F8F9FA;
+      color: #1F2A44;
+    }
+    header {
+      background-color: #FFFFFF;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .logo {
+      font-size: 24px;
+      font-weight: 600;
+      color: #00A7A8;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .nav-menu {
+      display: none;
+    }
+    .nav-menu a {
+      color: #1F2A44;
+      text-decoration: none;
+      margin: 0 12px;
+      font-size: 16px;
+    }
+    .nav-menu a:hover {
+      color: #00A7A8;
+      text-decoration: underline;
+    }
+    .hamburger {
+      display: block;
+      cursor: pointer;
+      font-size: 24px;
+      color: #00A7A8;
+    }
+    .mobile-dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 16px;
+      background-color: #FFFFFF;
+      border: 1px solid #E5E7EB;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      z-index: 10;
+      min-width: 160px;
+    }
+    .mobile-dropdown.active {
+      display: block;
+    }
+    .mobile-dropdown a {
+      display: block;
+      padding: 12px;
+      color: #1F2A44;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .mobile-dropdown a:hover {
+      background-color: #F1F5F9;
+      color: #00A7A8;
+    }
+    .greeting-container {
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+    .greeting {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1F2A44;
+    }
+    .greeting-date,
+    .greeting-time {
+      font-size: 12px;
+      color: #6B7280;
+    }
+    .profile-dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background-color: #FFFFFF;
+      border: 1px solid #E5E7EB;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      z-index: 10;
+      min-width: 200px;
+      padding: 12px;
+    }
+    .greeting-container:hover .profile-dropdown,
+    .profile-dropdown.active {
+      display: block;
+    }
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .profile img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .profile-info .username {
+      font-weight: 600;
+      font-size: 16px;
+    }
+    .profile-info .bio {
+      font-size: 14px;
+      color: #6B7280;
+      max-width: 150px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .grand-total {
+      font-size: 14px;
+      color: #1F2A44;
+      margin-bottom: 12px;
+    }
+    .sign-out {
+      display: block;
+      width: 100%;
+      padding: 8px;
+      background-color: #FF3B30;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-align: center;
+      font-size: 14px;
+    }
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    .income-summary {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      padding: 16px 0;
+    }
+    .summary-card {
+      background-color: #FFFFFF;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .summary-card i {
+      font-size: 24px;
+    }
+    .summary-card .amount {
+      font-size: 20px;
+      font-weight: 600;
+    }
+    .summary-card .label {
+      font-size: 14px;
+      color: #6B7280;
+    }
+    .platform-earnings {
+      background-color: #FFFFFF;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 16px;
+      margin: 16px 0;
+    }
+    .platform-earnings h3 {
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+    .platform-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .platform-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 16px;
+    }
+    .income-goal {
+      background-color: #FFFFFF;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 16px;
+      margin: 16px 0;
+    }
+    .income-goal h3 {
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+    .progress-container {
+      margin-top: 12px;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 20px;
+      background-color: #E5E7EB;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background-color: #00A7A8;
+      transition: width 0.3s ease;
+    }
+    .progress-text {
+      font-size: 14px;
+      margin-top: 8px;
+      text-align: center;
+    }
+    .filter-controls {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .filter-controls .form-group {
+      flex: 1;
+      min-width: 200px;
+    }
+    .view-selector {
+      display: flex;
+      gap: 8px;
+    }
+    .view-btn {
+      padding: 8px 16px;
+      border: 1px solid #E5E7EB;
+      border-radius: 4px;
+      background-color: #FFFFFF;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .view-btn.active {
+      background-color: #00A7A8;
+      color: #FFFFFF;
+      border-color: #00A7A8;
+    }
+    .wallet-card {
+      background-color: #FFFFFF;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 16px;
+      margin: 16px 0;
+    }
+    .wallet-card h2 {
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+    .balance-display {
+      font-size: 24px;
+      font-weight: 600;
+      text-align: center;
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 12px;
+    }
+    .balance-display.positive {
+      color: #34C759;
+    }
+    .balance-display.negative {
+      color: #FF3B30;
+    }
+    .wallet-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+    .wallet-actions button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    #cashout-btn {
+      background-color: #00A7A8;
+      color: #FFFFFF;
+    }
+    #pay-debt-btn {
+      background-color: #FF3B30;
+      color: #FFFFFF;
+    }
+    .payout-info {
+      text-align: center;
+      font-size: 14px;
+      color: #6B7280;
+      margin-bottom: 12px;
+    }
+    .transactions h3 {
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+    .transactions table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .transactions th, .transactions td {
+      padding: 8px;
+      font-size: 14px;
+      border-bottom: 1px solid #E5E7EB;
+      text-align: left;
+    }
+    .transactions th {
+      background-color: #F1F5F9;
+      font-weight: 600;
+    }
+    .trip-log {
+      padding: 16px 0;
+    }
+    .trip-log h2 {
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+    .add-trip-btn {
+      display: inline-block;
+      padding: 8px 16px;
+      background-color: #00A7A8;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+    .trip-table {
+      background-color: #FFFFFF;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      font-size: 14px;
+      border-bottom: 1px solid #E5E7EB;
+    }
+    th {
+      background-color: #F1F5F9;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    th:hover {
+      background-color: #E5E7EB;
+    }
+    td {
+      color: #1F2A44;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal.active {
+      display: flex;
+    }
+    .modal-content {
+      background-color: #FFFFFF;
+      border-radius: 8px;
+      padding: 24px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .modal-content h2 {
+      font-size: 20px;
+      margin-bottom: 16px;
+    }
+    .trip-form .form-section {
+      margin-bottom: 16px;
+    }
+    .trip-form .form-section h3 {
+      font-size: 16px;
+      margin-bottom: 8px;
+      color: #00A7A8;
+    }
+    .form-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .form-group {
+      flex: 1;
+      min-width: 150px;
+      margin-bottom: 12px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #E5E7EB;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .form-group input[readonly] {
+      background-color: #F1F5F9;
+    }
+    .duration-input {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .duration-input input {
+      width: 60px;
+    }
+    .radio-group {
+      display: flex;
+      gap: 16px;
+    }
+    .fee-breakdown {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .fee-breakdown div {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .fee-breakdown input {
+      width: 100px;
+    }
+    .fee-breakdown .total {
+      font-weight: 600;
+    }
+    .summary {
+      background-color: #F1F5F9;
+      padding: 12px;
+      border-radius: 4px;
+    }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+    .summary-row:last-child {
+      margin-bottom: 0;
+    }
+    .form-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 16px;
+    }
+    .form-actions button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    #save-trip {
+      background-color: #00A7A8;
+      color: #FFFFFF;
+    }
+    #cancel {
+      background-color: #FF3B30;
+      color: #FFFFFF;
+    }
+    .trip-type {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .online-form,
+    .offline-form {
+      display: none;
+    }
+    .online-form.active,
+    .offline-form.active {
+      display: block;
+    }
+    footer {
+      text-align: center;
+      padding: 16px;
+      color: #6B7280;
+      font-size: 14px;
+    }
+    footer a {
+      color: #6B7280;
+      text-decoration: none;
+      margin: 0 8px;
+    }
+    @media (min-width: 768px) {
+      header {
+        padding: 24px;
+      }
+      .nav-menu {
+        display: flex;
+      }
+      .hamburger,
+      .mobile-dropdown {
+        display: none;
+      }
+      .income-summary {
+        grid-template-columns: repeat(5, 1fr);
+      }
+      th, td {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo-container">
+      <div class="logo">BudgetTrack</div>
+    </div>
+    <div class="header-right">
+      <div class="greeting-container">
+        <div class="greeting" id="greeting-container">Good Afternoon, JohnDoe</div>
+        <div class="greeting-date" id="greeting-date">May 26, 2025</div>
+        <div class="greeting-time" id="greeting-time">02:51 PM</div>
+        <div class="profile-dropdown" id="profile-dropdown">
+          <div class="profile">
+            <img src="https://via.placeholder.com/40" alt="Profile Picture">
+            <div class="profile-info">
+              <span class="username">JohnDoe</span>
+              <span class="bio">Tracking my financial journey</span>
+            </div>
+          </div>
+          <div class="grand-total" id="grand-total">Available: KES 0.00</div>
+          <button class="sign-out" onclick="signOut()">Sign Out</button>
+        </div>
+      </div>
+      <nav class="nav-menu">
+        <a href="index.html">Dashboard</a>
+        <a href="income.html">Income</a>
+        <a href="expenses.html">Expenses</a>
+        <a href="savings.html">Savings</a>
+        <a href="settings.html">Settings</a>
+      </nav>
+      <i data-feather="briefcase" class="hamburger"></i>
+      <div class="mobile-dropdown" id="mobile-dropdown">
+        <a href="index.html">Dashboard</a>
+        <a href="income.html">Income</a>
+        <a href="expenses.html">Expenses</a>
+        <a href="savings.html">Savings</a>
+        <a href="settings.html">Settings</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <h1>Income</h1>
+    <div class="income-goal">
+      <h3>Income Goal</h3>
+      <div class="form-group">
+        <label for="goal-amount">Goal Amount (KES)</label>
+        <input type="number" id="goal-amount" step="0.01" min="0" placeholder="Enter goal amount">
+      </div>
+      <div class="form-group">
+        <label for="goal-period">Period</label>
+        <select id="goal-period">
+          <option value="daily">Daily</option>
+          <option value="weekly">Weekly</option>
+          <option value="monthly">Monthly</option>
+        </select>
+      </div>
+      <button class="submit" onclick="setIncomeGoal()">Set Goal</button>
+      <div class="progress-container" id="progress-container" style="display: none;">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill" style="width: 0%;"></div>
+        </div>
+        <div class="progress-text" id="progress-text">KES 0 / KES 0 (0%)</div>
+      </div>
+    </div>
+
+    <div class="income-summary">
+      <div class="summary-card">
+        <i data-feather="dollar-sign" style="color: #34C759;"></i>
+        <div>
+          <div class="amount" id="total-income">KES 0.00</div>
+          <div class="label">Total Income</div>
+        </div>
+      </div>
+      <div class="summary-card">
+        <i data-feather="clock" style="color: #007AFF;"></i>
+        <div>
+          <div class="amount" id="total-hours">0h 0m</div>
+          <div class="label">Total Hours Worked</div>
+        </div>
+      </div>
+      <div class="summary-card">
+        <i data-feather="compass" style="color: #5856D6;"></i>
+        <div>
+          <div class="amount" id="total-distance">0km</div>
+          <div class="label">Total Distance</div>
+        </div>
+      </div>
+      <div class="summary-card">
+        <i data-feather="trending-up" style="color: #34C759;"></i>
+        <div>
+          <div class="amount" id="earnings-per-hour">KES 0/hr</div>
+          <div class="label">Earnings per Hour</div>
+        </div>
+      </div>
+      <div class="summary-card">
+        <i data-feather="map-pin" style="color: #5856D6;"></i>
+        <div>
+          <div class="amount" id="earnings-per-km">KES 0/km</div>
+          <div class="label">Earnings per Km</div>
+        </div>
+      </div>
+      <div class="summary-card">
+        <i data-feather="percent" style="color: #FF3B30;"></i>
+        <div>
+          <div class="amount" id="total-service-fee">KES 0.00</div>
+          <div class="label">Total Service Fee</div>
+        </div>
+      </div>
+      <div class="summary-card">
+        <i data-feather="credit-card" style="color: #5856D6;"></i>
+        <div>
+          <div class="amount" id="wallet-balance">KES 0.00</div>
+          <div class="label">Wallet Balance</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="platform-earnings">
+      <h3>Earnings per Platform</h3>
+      <div class="platform-list" id="platform-list"></div>
+    </div>
+
+    <div class="wallet-card">
+      <h2>Uber Wallet</h2>
+      <div class="balance-display" id="wallet-balance">KES 0.00</div>
+      <div class="wallet-actions">
+        <button id="cashout-btn" style="display: none;">Cash Out</button>
+        <button id="pay-debt-btn" style="display: none;">Pay Debt</button>
+      </div>
+      <div class="payout-info">
+        <p>Next payout: <strong>Monday 4:00 AM</strong></p>
+        <p>Current payout period: <span id="payout-period"></span></p>
+      </div>
+      <div class="transactions">
+        <h3>Recent Transactions</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Description</th>
+              <th>Amount</th>
+              <th>Balance</th>
+            </tr>
+          </thead>
+          <tbody id="transactions-list"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="trip-log">
+      <h2>Trip Log</h2>
+      <div class="filter-controls">
+        <div class="form-group">
+          <label for="date-range">Date Range</label>
+          <input type="text" id="date-range" placeholder="Select date range">
+        </div>
+        <div class="view-selector">
+          <button class="view-btn active" onclick="setView('day')">Day</button>
+          <button class="view-btn" onclick="setView('week')">Week</button>
+          <button class="view-btn" onclick="setView('month')">Month</button>
+          <button class="view-btn" onclick="setView('year')">Year</button>
+        </div>
+        <button class="submit" onclick="applyFilter()">Apply Filter</button>
+      </div>
+      <button class="add-trip-btn" onclick="openModal()">Add Trip</button>
+      <div class="trip-table">
+        <table id="trip-table">
+          <thead>
+            <tr>
+              <th onclick="sortTable(0)">Date <i data-feather="chevron-down"></i></th>
+              <th>Start Time</th>
+              <th>Platform</th>
+              <th>Distance (km)</th>
+              <th>Duration</th>
+              <th>Total Fare (KES)</th>
+              <th>Cash Collected (KES)</th>
+              <th>Discount (KES)</th>
+              <th>Service Fee (KES)</th>
+              <th>Tips (KES)</th>
+              <th>Trip Earnings (KES)</th>
+              <th>Wallet Impact (KES)</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody id="trip-list"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="modal" id="trip-modal">
+      <div class="modal-content">
+        <h2>Add Trip</h2>
+        <div class="trip-type">
+          <label><input type="radio" name="trip-type" value="online" checked onclick="toggleForm()"> Uber Trip</label>
+          <label><input type="radio" name="trip-type" value="offline" onclick="toggleForm()"> Offline</label>
+        </div>
+        <div class="online-form active" id="online-form">
+          <form class="trip-form" id="uber-trip-form">
+            <h2>Record New Trip</h2>
+            <div class="form-section">
+              <h3>Trip Details</h3>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Date</label>
+                  <input type="date" id="trip-date" max="">
+                </div>
+                <div class="form-group">
+                  <label>Start Time</label>
+                  <input type="time" id="start-time">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Duration</label>
+                  <div class="duration-input">
+                    <input type="number" id="duration-hours" min="0" placeholder="H">h
+                    <input type="number" id="duration-minutes" min="0" max="59" placeholder="M">m
+                    <input type="number" id="duration-seconds" min="0" max="59" placeholder="S">s
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>End Time</label>
+                  <input type="time" id="end-time">
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Distance (km)</label>
+                <input type="number" id="distance" step="0.01" min="0">
+              </div>
+            </div>
+            <div class="form-section">
+              <h3>Payment Details</h3>
+              <div class="form-group">
+                <label>Total Fare (KES)</label>
+                <input type="number" id="fare" min="0" step="0.01">
+              </div>
+              <div class="form-group">
+                <label>Payment Method</label>
+                <div class="radio-group">
+                  <label><input type="radio" name="payment-method" value="cash" checked onclick="togglePayment()"> Cash</label>
+                  <label><input type="radio" name="payment-method" value="inapp" onclick="togglePayment()"> In-App</label>
+                </div>
+              </div>
+              <div class="form-group" id="cash-collected-group">
+                <label>Cash Collected (KES)</label>
+                <input type="number" id="cash-collected" min="0" step="0.01">
+              </div>
+              <div class="form-group" id="discount-group">
+                <label>Discount Applied (KES)</label>
+                <input type="number" id="discount" readonly>
+              </div>
+              <div class="form-group">
+                <label>Service Fee</label>
+                <div class="fee-breakdown">
+                  <div>
+                    <span>Commission (18%)</span>
+                    <input type="number" id="commission" step="0.01">
+                  </div>
+                  <div>
+                    <span>Taxes (3%)</span>
+                    <input type="number" id="taxes" step="0.01">
+                  </div>
+                  <div class="total">
+                    <span>Total Service Fee</span>
+                    <span id="total-service-fee">0.00</span>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Tips (KES)</label>
+                <input type="number" id="tips" min="0" step="0.01">
+              </div>
+              <div class="form-group">
+                <label>Notes</label>
+                <textarea id="notes" rows="4"></textarea>
+              </div>
+            </div>
+            <div class="form-section summary">
+              <h3>Trip Summary</h3>
+              <div class="summary-row">
+                <span>Trip Earnings</span>
+                <span id="trip-earnings">0.00</span>
+              </div>
+              <div class="summary-row">
+                <span>Wallet Impact</span>
+                <span id="wallet-impact">0.00</span>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="button" id="save-trip">Save Trip</button>
+              <button type="button" id="cancel" onclick="closeModal()">Cancel</button>
+            </div>
+          </form>
+        </div>
+        <div class="offline-form" id="offline-form">
+          <div class="form-group">
+            <label for="offline-source">Income Source</label>
+            <select id="offline-source">
+              <option value="Offline">Offline Trip</option>
+              <option value="Freelance">Freelance</option>
+              <option value="Tips">Tips</option>
+              <option value="Other">Other (Specify)</option>
+            </select>
+          </div>
+          <div class="form-group" id="custom-source-group" style="display: none;">
+            <label for="custom-source">Custom Source</label>
+            <input type="text" id="custom-source" placeholder="Enter source name">
+          </div>
+          <div class="form-group">
+            <label for="offline-date-time">Date & Time</label>
+            <input type="text" id="offline-date-time" placeholder="Select date and time">
+          </div>
+          <div class="form-group">
+            <label for="offline-fare">Income (KES)</label>
+            <input type="number" id="offline-fare" step="0.01" min="0">
+          </div>
+          <div class="form-group">
+            <label for="offline-my-earnings">My Earnings (KES)</label>
+            <input type="text" id="offline-my-earnings" readonly>
+          </div>
+          <div class="form-group">
+            <label for="offline-payout">Payout (KES)</label>
+            <input type="text" id="offline-payout" readonly>
+          </div>
+          <div class="form-actions">
+            <button class="submit" onclick="submitTrip()">Save Trip</button>
+            <button class="cancel" onclick="closeModal()">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <a href="terms.html">Terms</a> | <a href="privacy.html">Privacy</a> | <a href="support.html">Support</a>
+    <div>v1.0.0</div>
+  </footer>
+
+  <script>
+    // Initialize Feather Icons
+    try {
+      feather.replace();
+    } catch (e) {
+      console.error('Failed to initialize Feather Icons:', e);
+    }
+
+    // Username
+    const username = 'JohnDoe';
+
+    // Time-Based Greeting
+    const hours = 14; // 02:51 PM
+    let greetingText;
+    if (hours >= 0 && hours < 12) {
+      greetingText = `Good Morning, ${username}`;
+    } else if (hours >= 12 && hours < 17) {
+      greetingText = `Good Afternoon, ${username}`;
+    } else {
+      greetingText = `Good Evening, ${username}`;
+    }
+    document.getElementById('greeting-container').textContent = greetingText;
+
+    // Current Date and Time
+    const now = new Date('2025-05-26T14:51:00');
+    document.getElementById('greeting-date').textContent = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    document.getElementById('greeting-time').textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+    // Profile Dropdown Toggle
+    const greetingContainer = document.querySelector('.greeting-container');
+    const profileDropdown = document.getElementById('profile-dropdown');
+    greetingContainer.addEventListener('click', () => {
+      profileDropdown.classList.toggle('active');
+    });
+    document.addEventListener('click', (e) => {
+      if (!greetingContainer.contains(e.target)) {
+        profileDropdown.classList.remove('active');
+      }
+    });
+
+    // Mobile Dropdown Toggle
+    const hamburger = document.querySelector('.hamburger');
+    const mobileDropdown = document.getElementById('mobile-dropdown');
+    hamburger.addEventListener('click', () => {
+      mobileDropdown.classList.toggle('active');
+    });
+    document.addEventListener('click', (e) => {
+      if (!hamburger.contains(e.target) && !mobileDropdown.contains(e.target)) {
+        mobileDropdown.classList.remove('active');
+      }
+    });
+    mobileDropdown.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileDropdown.classList.remove('active');
+      });
+    });
+
+    // Sign Out
+    function signOut() {
+      alert('Signed out!');
+    }
+
+    // Wallet Class
+    class UberWallet {
+      constructor() {
+        this.balance = 0;
+        this.transactions = [];
+        this.payoutSchedule = { day: 1, hour: 4, minute: 0 };
+        this.debtThreshold = 900;
+      }
+      addTrip(trip) {
+        const amount = trip.walletImpact;
+        this.balance += amount;
+        const transaction = {
+          type: amount >= 0 ? 'credit' : 'debit',
+          amount: Math.abs(amount),
+          date: new Date(),
+          description: `Trip ${trip.id || ''}`,
+          tripId: trip.id,
+          balanceAfter: this.balance
+        };
+        this.transactions.push(transaction);
+        if (this.balance <= -this.debtThreshold) {
+          this.triggerDebtAlert();
+        }
+        return transaction;
+      }
+      makePayment(amount) {
+        if (this.balance >= 0) return false;
+        const paymentAmount = Math.min(amount, Math.abs(this.balance));
+        this.balance += paymentAmount;
+        const transaction = {
+          type: 'payment',
+          amount: paymentAmount,
+          date: new Date(),
+          description: 'Wallet payment',
+          balanceAfter: this.balance
+        };
+        this.transactions.push(transaction);
+        return transaction;
+      }
+      processPayout() {
+        if (this.balance <= 0) return false;
+        const payoutAmount = this.balance;
+        this.balance = 0;
+        const transaction = {
+          type: 'payout',
+          amount: payoutAmount,
+          date: new Date(),
+          description: 'Weekly payout',
+          balanceAfter: this.balance
+        };
+        this.transactions.push(transaction);
+        return transaction;
+      }
+      checkPayoutTime() {
+        const now = new Date();
+        return (
+          now.getDay() === this.payoutSchedule.day &&
+          now.getHours() === this.payoutSchedule.hour &&
+          now.getMinutes() >= this.payoutSchedule.minute
+        );
+      }
+      triggerDebtAlert() {
+        alert(`Your Uber wallet balance is KES ${this.balance.toFixed(2)}. You must make a payment to continue receiving trips.`);
+      }
+      getCurrentPayoutPeriod() {
+        const now = new Date();
+        const payoutDay = this.payoutSchedule.day;
+        const payoutHour = this.payoutSchedule.hour;
+        const payoutMinute = this.payoutSchedule.minute;
+        let start = new Date(now);
+        let end = new Date(now);
+        if (now.getDay() === payoutDay && now.getHours() >= payoutHour && now.getMinutes() >= payoutMinute) {
+          start.setDate(now.getDate() - (now.getDay() - payoutDay));
+        } else {
+          start.setDate(now.getDate() - (now.getDay() + (7 - payoutDay)));
+        }
+        start.setHours(payoutHour, payoutMinute + 1, 0, 0);
+        end.setDate(start.getDate() + 7);
+        end.setHours(payoutHour, payoutMinute, 0, 0);
+        return { start, end };
+      }
+    }
+
+    // Trip Class
+    class UberTrip {
+      constructor(data) {
+        this.id = Date.now().toString();
+        this.date = data.date || new Date();
+        this.startTime = data.startTime;
+        this.duration = data.duration;
+        this.distance = data.distance;
+        this.fare = data.fare;
+        this.paymentMethod = data.paymentMethod;
+        this.cashCollected = data.cashCollected || 0;
+        this.commission = data.commission;
+        this.taxes = data.taxes;
+        this.tips = data.tips || 0;
+        this.notes = data.notes || '';
+        this.calculatePayout();
+      }
+      calculatePayout() {
+        this.serviceFee = this.commission + this.taxes;
+        this.tripEarnings = this.fare - this.serviceFee;
+        if (this.paymentMethod === 'cash') {
+          this.discount = Math.max(0, this.fare - this.cashCollected);
+          this.payout = this.tripEarnings - this.cashCollected;
+        } else {
+          this.discount = 0;
+          this.payout = this.tripEarnings;
+        }
+        this.walletImpact = this.payout + this.tips;
+      }
+    }
+
+    // Initialize Wallet
+    const myWallet = new UberWallet();
+
+    // Load or Initialize Data
+    let trips = JSON.parse(localStorage.getItem('tripsData')) || [];
+    let incomeGoal = JSON.parse(localStorage.getItem('incomeGoal')) || { amount: 0, period: 'daily' };
+    let currentView = localStorage.getItem('currentView') || 'day';
+    let walletData = JSON.parse(localStorage.getItem('walletData')) || { balance: 0, transactions: [] };
+    myWallet.balance = walletData.balance;
+    myWallet.transactions = walletData.transactions;
+
+    // Modal Control
+    function openModal() {
+      try {
+        const modal = document.getElementById('trip-modal');
+        if (!modal) throw new Error('Modal element not found');
+        modal.classList.add('active');
+        toggleForm();
+        updateTripForm();
+      } catch (error) {
+        console.error('Error opening modal:', error);
+        alert('Failed to open modal. Please try again.');
+      }
+    }
+
+    function closeModal() {
+      try {
+        document.getElementById('trip-modal').classList.remove('active');
+        document.getElementById('uber-trip-form').reset();
+        document.getElementById('offline-form').reset();
+        document.getElementById('cash-collected-group').style.display = 'block';
+        document.getElementById('custom-source-group').style.display = 'none';
+        document.querySelector('input[name="payment-method"][value="cash"]').checked = true;
+        document.querySelector('input[name="trip-type"][value="online"]').checked = true;
+        toggleForm();
+        togglePayment();
+      } catch (error) {
+        console.error('Error closing modal:', error);
+      }
+    }
+
+    // Flatpickr for Offline Form
+    try {
+      flatpickr('#offline-date-time', {
+        enableTime: true,
+        dateFormat: 'Y-m-d H:i',
+        defaultDate: now
+      });
+      flatpickr('#date-range', {
+        mode: 'range',
+        dateFormat: 'Y-m-d',
+        defaultDate: [now, now]
+      });
+    } catch (error) {
+      console.error('Failed to initialize Flatpickr:', error);
+    }
+
+    // Toggle Form
+    function toggleForm() {
+      try {
+        const tripType = document.querySelector('input[name="trip-type"]:checked').value;
+        const onlineForm = document.getElementById('online-form');
+        const offlineForm = document.getElementById('offline-form');
+        onlineForm.classList.toggle('active', tripType === 'online');
+        offlineForm.classList.toggle('active', tripType === 'offline');
+      } catch (error) {
+        console.error('Error toggling form:', error);
+      }
+    }
+
+    // Toggle Payment Method
+    function togglePayment() {
+      try {
+        const paymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
+        const cashCollectedGroup = document.getElementById('cash-collected-group');
+        cashCollectedGroup.style.display = paymentMethod === 'cash' ? 'block' : 'none';
+        updateTripForm();
+      } catch (error) {
+        console.error('Error toggling payment method:', error);
+      }
+    }
+
+    // Update Trip Form Calculations
+    function updateTripForm() {
+      try {
+        const fare = parseFloat(document.getElementById('fare').value) || 0;
+        const paymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
+        const cashCollected = paymentMethod === 'cash' ? parseFloat(document.getElementById('cash-collected').value) || 0 : 0;
+        const commission = fare * 0.18;
+        const taxes = fare * 0.03;
+        const serviceFee = commission + taxes;
+        const discount = paymentMethod === 'cash' && cashCollected < fare ? fare - cashCollected : 0;
+        const tips = parseFloat(document.getElementById('tips').value) || 0;
+        const tripEarnings = fare - serviceFee;
+        const walletImpact = (paymentMethod === 'cash' ? tripEarnings - cashCollected : tripEarnings) + tips;
+
+        document.getElementById('commission').value = commission.toFixed(2);
+        document.getElementById('taxes').value = taxes.toFixed(2);
+        document.getElementById('total-service-fee').textContent = serviceFee.toFixed(2);
+        document.getElementById('discount').value = discount.toFixed(2);
+        document.getElementById('trip-earnings').textContent = tripEarnings.toFixed(2);
+        document.getElementById('wallet-impact').textContent = walletImpact.toFixed(2);
+
+        // Update End Time
+        const startTime = document.getElementById('start-time').value;
+        const hours = parseInt(document.getElementById('duration-hours').value) || 0;
+        const minutes = parseInt(document.getElementById('duration-minutes').value) || 0;
+        const seconds = parseInt(document.getElementById('duration-seconds').value) || 0;
+        if (startTime && (hours || minutes || seconds)) {
+          const start = new Date(`2025-05-26T${startTime}`);
+          start.setHours(start.getHours() + hours);
+          start.setMinutes(start.getMinutes() + minutes);
+          start.setSeconds(start.getSeconds() + seconds);
+          document.getElementById('end-time').value = start.toTimeString().slice(0, 5);
+        }
+      } catch (error) {
+        console.error('Error updating trip form:', error);
+      }
+    }
+
+    // Update Wallet UI
+    function updateWalletUI() {
+      try {
+        const walletBalance = document.getElementById('wallet-balance');
+        walletBalance.textContent = `KES ${myWallet.balance.toFixed(2)}`;
+        walletBalance.className = 'balance-display';
+        walletBalance.classList.add(myWallet.balance >= 0 ? 'positive' : 'negative');
+        document.getElementById('cashout-btn').style.display = myWallet.balance > 0 ? 'block' : 'none';
+        document.getElementById('pay-debt-btn').style.display = myWallet.balance < 0 ? 'block' : 'none';
+
+        const transactionsList = myWallet.transactions.slice(-5).reverse();
+        const tbody = document.getElementById('transactions-list');
+        tbody.innerHTML = '';
+        transactionsList.forEach(t => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${t.date.toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' })}</td>
+            <td>${t.description}</td>
+            <td>KES ${t.amount.toFixed(2)}</td>
+            <td>KES ${t.balanceAfter.toFixed(2)}</td>
+          `;
+          tbody.appendChild(row);
+        });
+
+        const { start, end } = myWallet.getCurrentPayoutPeriod();
+        document.getElementById('payout-period').textContent = 
+          `${start.toLocaleString('en-US', { month: 'short', day: '2-digit', hour: 'numeric', minute: '2-digit', hour12: true })} - ` +
+          `${end.toLocaleString('en-US', { month: 'short', day: '2-digit', hour: 'numeric', minute: '2-digit', hour12: true })}`;
+
+        document.getElementById('grand-total').textContent = `Available: KES ${myWallet.balance.toFixed(2)}`;
+        document.getElementById('wallet-balance').textContent = `KES ${myWallet.balance.toFixed(2)}`;
+      } catch (error) {
+        console.error('Error updating wallet UI:', error);
+      }
+    }
+
+    // Initialize Form
+    document.getElementById('trip-date').max = now.toISOString().split('T')[0];
+    document.getElementById('trip-date').value = now.toISOString().split('T')[0];
+    // Event Listeners for Form
+    ['trip-date', 'start-time', 'duration-hours', 'duration-minutes', 'duration-seconds', 'distance', 'fare', 'cash-collected', 'tips'].forEach(id => {
+      const element = document.getElementById(id);
+      if (element) element.addEventListener('input', updateTripForm);
+    });
+    document.querySelectorAll('input[name="payment-method"]').forEach(input => {
+      input.addEventListener('change', togglePayment);
+    });
+
+    // Wallet Actions
+    document.getElementById('cashout-btn').addEventListener('click', () => {
+      const transaction = myWallet.processPayout();
+      if (transaction) {
+        localStorage.setItem('walletData', JSON.stringify({ balance: myWallet.balance, transactions: myWallet.transactions }));
+        updateWalletUI();
+        alert(`Payout of KES ${transaction.amount.toFixed(2)} processed.`);
+      }
+    });
+
+    document.getElementById('pay-debt-btn').addEventListener('click', () => {
+      const amount = prompt('Enter payment amount (KES):');
+      const paymentAmount = parseFloat(amount);
+      if (isNaN(paymentAmount) || paymentAmount <= 0) {
+        alert('Please enter a valid payment amount.');
+        return;
+      }
+      const transaction = myWallet.makePayment(paymentAmount);
+      if (transaction) {
+        localStorage.setItem('walletData', JSON.stringify({ balance: myWallet.balance, transactions: myWallet.transactions }));
+        updateWalletUI();
+        alert(`Payment of KES ${paymentAmount.toFixed(2)} processed.`);
+      }
+    });
+
+    // View Control
+    function setView(view) {
+      try {
+        currentView = view;
+        localStorage.setItem('currentView', view);
+        document.querySelectorAll('.view-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.textContent.toLowerCase() === view);
+        });
+        applyFilter();
+      } catch (error) {
+        console.error('Error setting view:', error);
+      }
+    }
+
+    // Apply Filter
+    function applyFilter() {
+      try {
+        const dateRange = document.getElementById('date-range').value.split(' to ');
+        let startDate = new Date(dateRange[0]);
+        let endDate = dateRange[1] ? new Date(dateRange[1]) : startDate;
+
+        const today = new Date('2025-05-26');
+        if (currentView === 'day') {
+          startDate = endDate = today;
+        } else if (currentView === 'week') {
+          startDate = new Date(today);
+          startDate.setDate(today.getDate() - today.getDay());
+          endDate = new Date(startDate);
+          endDate.setDate(startDate.getDate() + 6);
+        } else if (currentView === 'month') {
+          startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+          endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+        } else if (currentView === 'year') {
+          startDate = new Date(today.getFullYear(), 0, 1);
+          endDate = new Date(today.getFullYear(), 11, 31);
+        }
+
+        const filteredTrips = trips.filter(trip => {
+          const tripDate = new Date(trip.date);
+          return tripDate >= startDate && tripDate <= endDate;
+        });
+
+        updateTripLog(filteredTrips);
+        updateSummary(filteredTrips);
+        updateIncomeGoalProgress(filteredTrips);
+      } catch (error) {
+        console.error('Error applying filter:', error);
+      }
+    }
+
+    // Update Trip Log
+    function updateTripLog(filteredTrips = trips) {
+      try {
+        const tbody = document.getElementById('trip-list');
+        tbody.innerHTML = '';
+        filteredTrips.forEach(trip => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${new Date(trip.date).toLocaleDateString('en-US')}</td>
+            <td>${trip.startTime || '-'}</td>
+            <td>${trip.platform}</td>
+            <td>${trip.distance ? trip.distance.toFixed(2) : '-'}</td>
+            <td>${formatDuration(trip.duration)}</td>
+            <td>KES ${(trip.fare || 0).toFixed(2)}</td>
+            <td>${trip.cashCollected ? 'KES ' + trip.cashCollected.toFixed(2) : '-'}</td>
+            <td>${trip.discount ? 'KES ' + trip.discount.toFixed(2) : '-'}</td>
+            <td>KES ${(trip.serviceFee || 0).toFixed(2)}</td>
+            <td>${trip.tips ? 'KES ' + trip.tips.toFixed(2) : '-'}</td>
+            <td>KES ${(trip.tripEarnings || 0).toFixed(2)}</td>
+            <td>KES ${(trip.walletImpact || 0).toFixed(2)}</td>
+            <td>${trip.notes || '-'}</td>
+          `;
+          tbody.appendChild(row);
+        });
+        feather.replace();
+      } catch (error) {
+        console.error('Error updating trip log:', error);
+      }
+    }
+
+    // Format Duration
+    function formatDuration(seconds) {
+      if (!seconds) return '-';
+      const h = Math.floor(seconds / 3600);
+      const m = Math.floor(seconds % 3600 / 60));
+      const s = seconds % 60;
+      return `${h ? h + 'h ' : ''}${m ? m + 'm ' : ''}${s}s`;
+    }
+
+    // Update Summary
+    function updateSummary(filteredTrips = trips) {
+      try {
+        const totalIncome = filteredTrips.reduce((sum, t) => sum + (t.fare || 0) + (t.tips || 0), 0);
+        const totalHours = filteredTrips.reduce((sum, t) => sum + (t.duration ? t.duration / 3600 : 0), 0);
+        const totalDistance = filteredTrips.reduce((sum, t) => sum + (t.distance || 0), 0);
+        const totalServiceFee = filteredTrips.reduce((sum, t) => sum + (t.serviceFee || 0), 0);
+        const walletBalance = myWallet.balance;
+
+        document.getElementById('total-income').textContent = `KES ${totalIncome.toFixed(2)}`;
+        document.getElementById('total-hours').textContent = `${Math.floor(totalHours)}h ${Math.round((totalHours % 1) * 60)}m`;
+        document.getElementById('total-distance').textContent = `${totalDistance.toFixed(2)}km`;
+        document.getElementById('earnings-per-hour').textContent = totalHours > 0 ? `KES ${(totalIncome / totalHours).toFixed(2)}/hr` : 'KES 0/hr';
+        document.getElementById('earnings-per-km').textContent = totalDistance > 0 ? `KES ${(totalIncome / totalDistance).toFixed(2)}/km` : 'KES 0/km';
+        document.getElementById('total-service-fee').textContent = `KES ${totalServiceFee.toFixed(2)}`;
+        document.getElementById('wallet-balance').textContent = `KES ${walletBalance.toFixed(2)}`;
+
+        const platformEarnings = filteredTrips.reduce((acc, t) => {
+          const platform = t.platform || 'Unknown';
+          acc[platform] = (acc[platform] || 0) + (t.fare || 0) + (t.tips || 0);
+          return acc;
+        }, {});
+        const platformList = document.getElementById('platform-list');
+        platformList.innerHTML = '';
+        for (const [platform, earnings] of Object.entries(platformEarnings)) {
+          const item = document.createElement('div');
+          item.className = 'platform-item';
+          item.innerHTML = `<span>${platform}</span><span>KES ${earnings.toFixed(2)}</span>`;
+          platformList.appendChild(item);
+        }
+      } catch (error) {
+        console.error('Error updating summary:', error);
+      }
+    }
+
+    // Income Goal
+    function setIncomeGoal() {
+      try {
+        const amount = parseFloat(document.getElementById('goal-amount').value) || 0;
+        const period = document.getElementById('goal-period').value;
+        if (amount <= 0) {
+          alert('Please enter a valid goal amount.');
+          return;
+        }
+        incomeGoal = { amount, period };
+        localStorage.setItem('incomeGoal', JSON.stringify(incomeGoal));
+        updateIncomeGoalProgress();
+        document.getElementById('progress-container').style.display = 'block';
+      } catch (error) {
+        console.error('Error setting income goal:', error);
+      }
+    }
+
+    function updateIncomeGoalProgress(filteredTrips = trips) {
+      try {
+        if (incomeGoal.amount === 0) return;
+        let startDate, endDate;
+        const today = new Date('2025-05-26');
+        if (incomeGoal.period === 'daily') {
+          startDate = endDate = today;
+        } else if (incomeGoal.period === 'weekly') {
+          startDate = new Date(today);
+          startDate.setDate(today.getDate() - today.getDay());
+          endDate = new Date(startDate);
+          endDate.setDate(startDate.getDate() + 6);
+        } else {
+          startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+          endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+        }
+
+        const periodIncome = filteredTrips
+          .filter(t => {
+            const tripDate = new Date(t.date);
+            return tripDate >= startDate && tripDate <= endDate;
+          })
+          .reduce((sum, t) => sum + (t.fare || 0) + (t.tips || 0), 0);
+
+        const percentage = Math.min(100, (periodIncome / incomeGoal.amount) * 100);
+        document.getElementById('progress-fill').style.width = `${percentage}%`;
+        document.getElementById('progress-text').textContent = `KES ${periodIncome.toFixed(2)} / KES ${incomeGoal.amount.toFixed(2)} (${percentage.toFixed(1)}%)`;
+      } catch (error) {
+        console.error('Error updating income goal progress:', error);
+      }
+    }
+
+    // Submit Trip
+    function submitTrip() {
+      try {
+        const tripType = document.querySelector('input[name="trip-type"]:checked').value;
+
+        if (tripType === 'online') {
+          const tripData = {
+            date: new Date(document.getElementById('trip-date').value),
+            startTime: document.getElementById('start-time').value,
+            duration: calculateDurationInSeconds(),
+            distance: parseFloat(document.getElementById('distance').value) || 0,
+            fare: parseFloat(document.getElementById('fare').value) || 0,
+            paymentMethod: document.querySelector('input[name="payment-method"]:checked').value,
+            cashCollected: parseFloat(document.getElementById('cash-collected').value) || 0,
+            commission: parseFloat(document.getElementById('commission').value) || 0,
+            taxes: parseFloat(document.getElementById('taxes').value) || 0,
+            tips: parseFloat(document.getElementById('tips').value) || 0,
+            notes: document.getElementById('notes').value || ''
+          };
+
+          // Validation
+          if (!tripData.date || isNaN(tripData.date.getTime()) || !tripData.startTime || !tripData.duration || !tripData.fare || tripData.distance <= 0) {
+            alert('Please fill all required fields (Date, Start Time, Duration, Distance, Total Fare).');
+            return;
+          }
+          if (tripData.paymentMethod === 'cash' && tripData.cashCollected > tripData.fare) {
+            alert('Cash Collected cannot be greater than Total Fare.');
+            return;
+          }
+          if (tripData.commission < 0 || tripData.taxes < 0) {
+            alert('Commission and taxes cannot be negative.');
+            return;
+          }
+          if (tripData.duration <= 0) {
+            alert('Duration must be positive.');
+            return;
+          }
+
+          const newTrip = new UberTrip(tripData);
+          newTrip.platform = 'Uber';
+          trips.push(newTrip);
+          const transaction = myWallet.addTrip(newTrip);
+          localStorage.setItem('tripsData', JSON.stringify(trips));
+          localStorage.setItem('walletData', JSON.stringify({ balance: myWallet.balance, transactions: myWallet.transactions }));
+        } else {
+          let source = document.getElementById('offline-source').value;
+          if (source === 'Other') {
+            source = document.getElementById('custom-source').value.trim();
+            if (!source) {
+              alert('Please specify a custom source.');
+              return;
+            }
+          }
+          const dateStr = document.getElementById('offline-date-time').value;
+          const fare = parseFloat(document.getElementById('offline-fare').value) || 0;
+
+          if (!dateStr || fare <= 0) {
+            alert('Please fill all required fields for offline income.');
+            return;
+          }
+
+          const date = new Date(dateStr.split(' ')[0]);
+          const time = dateStr.split(' ')[1];
+
+          trips.push({
+            type: 'offline',
+            id: Date.now().toString(),
+            date,
+            startTime: time,
+            platform: source,
+            distance: 0,
+            duration: '',
+            fare,
+            cashCollected: 0,
+            commission: 0,
+            taxes: 0,
+            serviceFee: 0,
+            tips: 0,
+            tripEarnings: fare,
+            walletImpact: fare,
+            notes: ''
+          });
+        }
+
+        localStorage.setItem('tripsData', JSON.stringify(trips));
+        applyFilter();
+        updateWalletUI();
+        closeModal();
+      } catch (error) {
+        console.error('Error submitting trip:', error);
+        alert('Failed to submit trip. Please try again.');
+      }
+    }
+
+    // Calculate Duration in Seconds
+    function calculateDurationInSeconds() {
+      const hours = parseInt(document.getElementById('duration-hours').value) || 0;
+      const minutes = parseInt(document.getElementById('duration-minutes').value) || 0;
+      const seconds = parseInt(document.getElementById('duration-seconds').value) || 0;
+      return (hours * 3600) + (minutes * 60) + seconds;
+    }
+
+    // Offline Form Calculations
+    function updateOfflineForm() {
+      try {
+        const fare = parseFloat(document.getElementById('offline-fare').value) || 0;
+        document.getElementById('offline-my-earnings').value = `KES ${fare.toFixed(2)}`;
+        document.getElementById('offline-payout').value = `KES ${fare.toFixed(2)}`;
+      } catch (error) {
+        console.error('Error updating offline form:', error);
+      }
+    }
+
+    // Event Listeners for Offline Form
+    document.getElementById('offline-source').addEventListener('change', (e) => {
+      const customSourceGroup = document.getElementById('custom-source-group');
+      customSourceGroup.style.display = e.target.value === 'Other' ? 'block' : 'none';
+    });
+    document.getElementById('offline-fare').addEventListener('input', updateOfflineForm);
+
+    // Save-Trip Button
+    document.getElementById('save-trip').addEventListener('click', submitTrip);
+
+    // Table Sorting
+    function sortTable(columnIndex) {
+      try {
+        const table = document.getElementById('trip-table');
+        const tbody = document.getElementById('trip-list');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        const isAscending = table.dataset.sortOrder !== 'asc';
+        table.dataset.sortOrder = isAscending ? 'asc' : 'desc';
+
+        rows.sort((a, b) => {
+          let aValue = a.cells[columnIndex].textContent.trim();
+          let bValue = b.cells[columnIndex].textContent.trim();
+
+          if (columnIndex === 0) {
+            aValue = new Date(aValue);
+            bValue = new Date(bValue);
+            return isAscending ? aValue - bValue : bValue - aValue;
+          } else if (columnIndex === 1) {
+            if (aValue === '-') return isAscending ? 1 : -1;
+            if (bValue === '-') return isAscending ? -1 : 1;
+            const timeA = aValue.split(':').map(Number);
+            const timeB = bValue.split(':').map(Number);
+            aValue = timeA[0] * 60 + timeA[1];
+            bValue = timeB[0] * 60 + timeB[1];
+            return isAscending ? aValue - bValue : bValue - aValue;
+          } else if ([3, 5, 6, 7, 8, 9, 10, 11].includes(columnIndex)) {
+            aValue = aValue === '-' ? 0 : parseFloat(aValue.replace(/KES|,/g, ''));
+            bValue = bValue === '-' ? 0 : parseFloat(bValue.replace(/KES|,/g, ''));
+            return isAscending ? aValue - bValue : bValue - aValue;
+          } else if (columnIndex === 4) {
+            if (aValue === '-') return isAscending ? 1 : -1;
+            if (bValue === '-') return isAscending ? -1 : 1;
+            const parseDuration = (str) => {
+              const matches = str.match(/\d+/g) || [0, 0, 0];
+              const [h, m, s] = matches.map(Number);
+              return h * 3600 + m * 60 + s;
+            };
+            aValue = parseDuration(aValue);
+            bValue = parseDuration(bValue);
+            return isAscending ? aValue - bValue : bValue - aValue;
+          }
+          return isAscending ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+        });
+
+        tbody.innerHTML = '';
+        rows.forEach(row => tbody.appendChild(row));
+
+        const headers = table.querySelectorAll('th');
+        headers.forEach((header, index) => {
+          const icon = header.querySelector('i');
+          if (index === columnIndex) {
+            icon.setAttribute('data-feather', isAscending ? 'chevron-up' : 'chevron-down');
+          } else {
+            icon.setAttribute('data-feather', 'chevron-down');
+          }
+        });
+        feather.replace();
+      } catch (error) {
+        console.error('Error sorting table:', error);
+      }
+    }
+
+    // Check Payout Periodically
+    setInterval(() => {
+      if (myWallet.checkPayoutTime()) {
+        const transaction = myWallet.processPayout();
+        if (transaction) {
+          localStorage.setItem('walletData', JSON.stringify({ balance: myWallet.balance, transactions: myWallet.transactions }));
+          updateWalletUI();
+          alert(`Payout of KES ${transaction.amount.toFixed(2)} processed.`);
+        }
+      }
+    }, 60000); // Check every minute
+
+    // Initialize
+    try {
+      setView(currentView);
+      updateWalletUI();
+      updateIncomeGoalProgress();
+      if (incomeGoal.amount > 0) {
+        document.getElementById('progress-container').style.display = 'block';
+        document.getElementById('goal-amount').value = incomeGoal.amount;
+        document.getElementById('goal-period').value = incomeGoal.period;
+      }
+      applyFilter();
+    } catch (error) {
+      console.error('Error initializing page:', error);
+    }
+  </script>
+</body>
+</html>
