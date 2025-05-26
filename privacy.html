@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BudgetTrack - Privacy Policy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/feather-icons"></script>
+  <style>
+    /* Same CSS as index.html */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+    body {
+      background-color: #F8F9FA;
+      color: #1F2A44;
+    }
+    header {
+      background-color: #FFFFFF;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .logo {
+      font-size: 24px;
+      font-weight: 600;
+      color: #00A7A8;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .nav-menu {
+      display: none;
+    }
+    .nav-menu a {
+      color: #1F2A44;
+      text-decoration: none;
+      margin: 0 12px;
+      font-size: 16px;
+    }
+    .nav-menu a:hover {
+      color: #00A7A8;
+      text-decoration: underline;
+    }
+    .hamburger {
+      display: block;
+      cursor: pointer;
+      font-size: 24px;
+      color: #00A7A8;
+    }
+    .mobile-dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 16px;
+      background-color: #FFFFFF;
+      border: 1px solid #E5E7EB;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      z-index: 10;
+      min-width: 160px;
+    }
+    .mobile-dropdown.active {
+      display: block;
+    }
+    .mobile-dropdown a {
+      display: block;
+      padding: 12px;
+      color: #1F2A44;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .mobile-dropdown a:hover {
+      background-color: #F1F5F9;
+      color: #00A7A8;
+    }
+    .greeting-container {
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+    .greeting {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1F2A44;
+    }
+    .greeting-date,
+    .greeting-time {
+      font-size: 12px;
+      color: #6B7280;
+    }
+    .profile-dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background-color: #FFFFFF;
+      border: 1px solid #E5E7EB;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      z-index: 10;
+      min-width: 200px;
+      padding: 12px;
+    }
+    .greeting-container:hover .profile-dropdown,
+    .profile-dropdown.active {
+      display: block;
+    }
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .profile img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .profile-info .username {
+      font-weight: 600;
+      font-size: 16px;
+    }
+    .profile-info .bio {
+      font-size: 14px;
+      color: #6B7280;
+      max-width: 150px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .grand-total {
+      font-size: 14px;
+      color: #1F2A44;
+      margin-bottom: 12px;
+    }
+    .sign-out {
+      display: block;
+      width: 100%;
+      padding: 8px;
+      background-color: #FF3B30;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-align: center;
+      font-size: 14px;
+    }
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+    p {
+      font-size: 16px;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+    footer {
+      text-align: center;
+      padding: 16px;
+      color: #6B7280;
+      font-size: 14px;
+    }
+    footer a {
+      color: #6B7280;
+      text-decoration: none;
+      margin: 0 8px;
+    }
+    footer a:hover {
+      color: #00A7A8;
+    }
+    @media (min-width: 768px) {
+      header {
+        padding: 24px;
+      }
+      .nav-menu {
+        display: flex;
+      }
+      .hamburger,
+      .mobile-dropdown {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo-container">
+      <div class="logo">BudgetTrack</div>
+    </div>
+    <div class="header-right">
+      <div class="greeting-container">
+        <div class="greeting" id="greeting-container">Good Evening, JohnDoe</div>
+        <div class="greeting-date" id="greeting-date">May 27, 2025</div>
+        <div class="greeting-time" id="greeting-time">12:25 AM</div>
+        <div class="profile-dropdown" id="profile-dropdown">
+          <div class="profile">
+            <img src="https://via.placeholder.com/40" alt="Profile Picture">
+            <div class="profile-info">
+              <span class="username">JohnDoe</span>
+              <span class="bio">Tracking my financial journey</span>
+            </div>
+          </div>
+          <div class="grand-total" id="grand-total">Available: KES 0.00</div>
+          <button class="sign-out" onclick="signOut()">Sign Out</button>
+        </div>
+      </div>
+      <nav class="nav-menu">
+        <a href="index.html">Dashboard</a>
+        <a href="income.html">Income</a>
+        <a href="expenses.html">Expenses</a>
+        <a href="savings.html">Savings</a>
+        <a href="settings.html">Settings</a>
+      </nav>
+      <i data-feather="menu" class="hamburger"></i>
+      <div class="mobile-dropdown" id="mobile-dropdown">
+        <a href="index.html">Dashboard</a>
+        <a href="income.html">Income</a>
+        <a href="expenses.html">Expenses</a>
+        <a href="savings.html">Savings</a>
+        <a href="settings.html">Settings</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <h1>Privacy Policy</h1>
+    <p>This Privacy Policy describes how BudgetTrack collects, uses, and protects your personal information. This is a placeholder policy and should be updated with specific details.</p>
+    <p><strong>Data Collection:</strong> We collect information you provide, such as trip data and income records, stored locally on your device via LocalStorage.</p>
+    <p><strong>Data Use:</strong> Your data is used to generate financial summaries and track goals within the app.</p>
+    <p><strong>Data Protection:</strong> No data is transmitted to external servers. All information remains on your device.</p>
+    <p><strong>Contact Us:</strong> For questions, reach out via our <a href="support.html">Support</a> page.</p>
+    <p><strong>Effective Date:</strong> May 27, 2025</p>
+  </main>
+
+  <footer>
+    <a href="tos.html">Terms</a> | <a href="privacy.html">Privacy</a> | <a href="support.html">Support</a>
+    <div>v1.1.0</div>
+  </footer>
+
+  <script>
+    // Initialize Feather Icons
+    try {
+      feather.replace();
+    } catch (e) {
+      console.error('Failed to initialize Feather Icons:', e);
+    }
+
+    // Username
+    const username = 'JohnDoe';
+
+    // Time-Based Greeting
+    const hours = 0; // 12:25 AM
+    let greetingText = hours >= 12 && hours < 17 ? `Good Afternoon, ${username}` :
+                      hours >= 17 || hours < 5 ? `Good Evening, ${username}` :
+                      `Good Morning, ${username}`;
+    document.getElementById('greeting-container').textContent = greetingText;
+
+    // Current Date and Time
+    const now = new Date('2025-05-27T00:25:00');
+    document.getElementById('greeting-date').textContent = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    document.getElementById('greeting-time').textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+    // Profile Dropdown Toggle
+    const greetingContainer = document.querySelector('.greeting-container');
+    const profileDropdown = document.getElementById('profile-dropdown');
+    greetingContainer.addEventListener('click', () => {
+      profileDropdown.classList.toggle('active');
+    });
+    document.addEventListener('click', (e) => {
+      if (!greetingContainer.contains(e.target)) {
+        profileDropdown.classList.remove('active');
+      }
+    });
+
+    // Mobile Dropdown Toggle
+    const hamburger = document.querySelector('.hamburger');
+    const mobileDropdown = document.getElementById('mobile-dropdown');
+    hamburger.addEventListener('click', () => {
+      mobileDropdown.classList.toggle('active');
+    });
+    document.addEventListener('click', (e) => {
+      if (!hamburger.contains(e.target) && !mobileDropdown.contains(e.target)) {
+        mobileDropdown.classList.remove('active');
+      }
+    });
+    mobileDropdown.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileDropdown.classList.remove('active');
+      });
+    });
+
+    // Sign Out
+    function signOut() {
+      alert('Signed out!');
+    }
+  </script>
+</body>
+</html>
