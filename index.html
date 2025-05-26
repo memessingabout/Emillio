@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BudgetTrack - Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background-color: #F8F9FA;
+      color: #1F2A44;
+    }
+
+    /* Header */
+    header {
+      background-color: #FFFFFF;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 600;
+      color: #00A7A8;
+    }
+
+    .nav-menu {
+      display: none; /* Hidden on mobile */
+    }
+
+    .nav-menu a {
+      color: #1F2A44;
+      text-decoration: none;
+      margin: 0 12px;
+      font-size: 16px;
+    }
+
+    .nav-menu a:hover {
+      color: #00A7A8;
+      text-decoration: underline;
+    }
+
+    .hamburger {
+      display: block; /* Visible on mobile */
+      cursor: pointer;
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .profile img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .profile-info .username {
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .profile-info .bio {
+      font-size: 14px;
+      color: #6B7280;
+      max-width: 150px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Performance Toggle */
+    .toggle {
+      display: flex;
+      justify-content: center;
+      padding: 16px;
+      gap: 8px;
+    }
+
+    .toggle button {
+      padding: 8px 16px;
+      border: 1px solid #6B7280;
+      background: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      color: #1F2A44;
+    }
+
+    .toggle button.active {
+      background-color: #00A7A8;
+      color: #FFFFFF;
+      border-color: #00A7A8;
+    }
+
+    /* Financial Totals */
+    .totals {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      padding: 16px;
+    }
+
+    .total-card {
+      background-color: #FFFFFF;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .total-card i {
+      font-size: 24px;
+    }
+
+    .total-card .amount {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .total-card .label {
+      font-size: 14px;
+      color: #6B7280;
+    }
+
+    /* Weekly Overview */
+    .weekly-overview {
+      padding: 16px;
+    }
+
+    .weekly-overview h2 {
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+
+    .chart-container {
+      background-color: #FFFFFF;
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Trip Summary */
+    .trip-summary {
+      display: flex;
+      justify-content: space-between;
+      padding: 16px;
+      gap: 16px;
+    }
+
+    .trip-card {
+      background-color: #FFFFFF;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 12px;
+      flex: 1;
+      text-align: center;
+    }
+
+    .trip-card i {
+      font-size: 20px;
+      color: #007AFF;
+    }
+
+    .trip-card .value {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 8px 0;
+    }
+
+    .trip-card .label {
+      font-size: 14px;
+      color: #6B7280;
+    }
+
+    /* Transactions */
+    .transactions {
+      padding: 16px;
+    }
+
+    .transactions h2 {
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+
+    .transaction-list {
+      background-color: #FFFFFF;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .transaction-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px;
+      border-bottom: 1px solid #E5E7EB;
+    }
+
+    .transaction-item:last-child {
+      border-bottom: none;
+    }
+
+    .transaction-details {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .transaction-details i {
+      font-size: 16px;
+    }
+
+    .view-all {
+      display: block;
+      text-align: center;
+      padding: 12px;
+      color: #00A7A8;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 16px;
+      color: #6B7280;
+      font-size: 14px;
+    }
+
+    footer a {
+      color: #6B7280;
+      text-decoration: none;
+      margin: 0 8px;
+    }
+
+    /* Responsive Design */
+    @media (min-width: 768px) {
+      header {
+        padding: 24px;
+      }
+
+      .nav-menu {
+        display: flex;
+      }
+
+      .hamburger {
+        display: none;
+      }
+
+      .totals {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .trip-summary {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      main {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 3fr 2fr;
+        gap: 24px;
+      }
+
+      .right-column {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">BudgetTrack</div>
+    <nav class="nav-menu">
+      <a href="#">Budget</a>
+      <a href="#">Transactions</a>
+      <a href="#">Savings</a>
+      <a href="#">Trips</a>
+      <a href="#">Settings</a>
+    </nav>
+    <i data-feather="menu" class="hamburger"></i>
+    <div class="profile">
+      <img src="https://via.placeholder.com/40" alt="Profile Picture">
+      <div class="profile-info">
+        <span class="username">John Doe</span>
+        <span class="bio">Tracking my financial journey</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="left-column">
+      <div class="toggle">
+        <button class="active" onclick="updatePerformance('daily')">Daily</button>
+        <button onclick="updatePerformance('weekly')">Weekly</button>
+        <button onclick="updatePerformance('monthly')">Monthly</button>
+      </div>
+
+      <div class="weekly-overview">
+        <h2>Weekly Overview</h2>
+        <div class="chart-container">
+          <canvas id="performanceChart"></canvas>
+        </div>
+      </div>
+
+      <div class="transactions">
+        <h2>Last 10 Transactions</h2>
+        <div class="transaction-list">
+          <div class="transaction-item">
+            <div class="transaction-details">
+              <i data-feather="shopping-cart"></i>
+              <span>May 25 | Grocery Store</span>
+            </div>
+            <span style="color: #FF3B30;">-$50</span>
+          </div>
+          <div class="transaction-item">
+            <div class="transaction-details">
+              <i data-feather="dollar-sign"></i>
+              <span>May 24 | Salary</span>
+            </div>
+            <span style="color: #34C759;">+$2,000</span>
+          </div>
+          <!-- Add more transactions as needed -->
+        </div>
+        <a href="#" class="view-all">View All</a>
+      </div>
+    </div>
+
+    <div class="right-column">
+      <div class="totals">
+        <div class="total-card">
+          <i data-feather="trending-up" style="color: #34C759;"></i>
+          <div>
+            <div class="amount">$5,000</div>
+            <div class="label">Total Income</div>
+          </div>
+        </div>
+        <div class="total-card">
+          <i data-feather="trending-down" style="color: #FF3B30;"></i>
+          <div>
+            <div class="amount">$3,200</div>
+            <div class="label">Total Expenses</div>
+          </div>
+        </div>
+        <div class="total-card">
+          <i data-feather="archive" style="color: #007AFF;"></i>
+          <div>
+            <div class="amount">$1,800</div>
+            <div class="label">Total Savings</div>
+          </div>
+        </div>
+        <div class="total-card">
+          <i data-feather="credit-card" style="color: #5856D6;"></i>
+          <div>
+            <div class="amount">$2,500</div>
+            <div class="label">Wallet Balances</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="trip-summary">
+        <div class="trip-card">
+          <i data-feather="map-pin"></i>
+          <div class="value">12</div>
+          <div class="label">Total Trips</div>
+        </div>
+        <div class="trip-card">
+          <i data-feather="clock"></i>
+          <div class="value">45h</div>
+          <div class="label">Total Hours</div>
+        </div>
+        <div class="trip-card">
+          <i data-feather="compass"></i>
+          <div class="value">320km</div>
+          <div class="label">Total Distance</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <a href="#">Terms</a> | <a href="#">Privacy</a> | <a href="#">Support</a>
+    <div>v1.0.0</div>
+  </footer>
+
+  <script>
+    // Initialize Feather Icons
+    feather.replace();
+
+    // Performance Toggle
+    const toggleButtons = document.querySelectorAll('.toggle button');
+    toggleButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        toggleButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+      });
+    });
+
+    // Chart.js for Weekly Overview
+    const ctx = document.getElementById('performanceChart').getContext('2d');
+    const performanceChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        datasets: [
+          {
+            label: 'Income',
+            data: [1000, 1200, 800, 1500, 1100, 900, 1300],
+            backgroundColor: '#34C759',
+          },
+          {
+            label: 'Expenses',
+            data: [600, 700, 500, 800, 650, 400, 600],
+            backgroundColor: '#FF3B30',
+          },
+          {
+            label: 'Savings',
+            data: [400, 500, 300, 700, 450, 500, 700],
+            backgroundColor: '#007AFF',
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: { stacked: false },
+          y: { beginAtZero: true }
+        }
+      }
+    });
+
+    // Update Performance Data (Placeholder)
+    function updatePerformance(period) {
+      // Update chart and totals based on period (daily, weekly, monthly)
+      console.log(`Switched to ${period} view`);
+      // Example: Update chart data
+      performanceChart.data.datasets[0].data = period === 'daily' ? [200, 150, 100, 300, 250, 200, 400] : period === 'monthly' ? [4000, 4500, 3800, 5000, 4200, 3900, 4700] : [1000, 1200, 800, 1500, 1100, 900, 1300];
+      performanceChart.update();
+    }
+  </script>
+</body>
+</html>
