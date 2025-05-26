@@ -39,8 +39,13 @@
       color: #00A7A8;
     }
 
+    .current-date {
+      font-size: 14px;
+      color: #6B7280;
+    }
+
     .nav-menu {
-      display: none; /* Hidden on mobile */
+      display: none;
     }
 
     .nav-menu a {
@@ -56,7 +61,7 @@
     }
 
     .hamburger {
-      display: block; /* Visible on mobile */
+      display: block;
       cursor: pointer;
     }
 
@@ -92,28 +97,74 @@
       text-overflow: ellipsis;
     }
 
-    /* Performance Toggle */
+    /* Dropdown Toggle */
     .toggle {
       display: flex;
       justify-content: center;
       padding: 16px;
-      gap: 8px;
+      position: relative;
     }
 
-    .toggle button {
+    .dropdown-button {
       padding: 8px 16px;
       border: 1px solid #6B7280;
-      background: none;
+      background-color: #FFFFFF;
       border-radius: 4px;
       cursor: pointer;
       font-size: 14px;
       color: #1F2A44;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .toggle button.active {
+    .dropdown-button i {
+      font-size: 16px;
+    }
+
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      background-color: #FFFFFF;
+      border: 1px solid #E5E7EB;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      z-index: 10;
+      min-width: 150px;
+    }
+
+    .dropdown-menu a {
+      display: block;
+      padding: 8px 16px;
+      color: #1F2A44;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .dropdown-menu a:hover {
       background-color: #00A7A8;
       color: #FFFFFF;
-      border-color: #00A7A8;
+    }
+
+    .dropdown-button.active + .dropdown-menu {
+      display: block;
+    }
+
+    /* Date Picker */
+    .date-picker {
+      display: none;
+      justify-content: center;
+      padding: 8px 16px;
+    }
+
+    .date-picker input[type="date"],
+    .date-picker input[type="text"] {
+      padding: 8px;
+      border: 1px solid #6B7280;
+      border-radius: 4px;
+      font-size: 14px;
+      margin: 0 4px;
     }
 
     /* Financial Totals */
@@ -148,23 +199,6 @@
       color: #6B7280;
     }
 
-    /* Weekly Overview */
-    .weekly-overview {
-      padding: 16px;
-    }
-
-    .weekly-overview h2 {
-      font-size: 18px;
-      margin-bottom: 12px;
-    }
-
-    .chart-container {
-      background-color: #FFFFFF;
-      border-radius: 8px;
-      padding: 16px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
     /* Trip Summary */
     .trip-summary {
       display: flex;
@@ -196,6 +230,33 @@
     .trip-card .label {
       font-size: 14px;
       color: #6B7280;
+    }
+
+    /* Charts */
+    .charts {
+      padding: 16px;
+    }
+
+    .charts h2 {
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+
+    .chart-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+    }
+
+    .chart-card {
+      background-color: Ch
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 16px;
+      flex: 1;
+      min-width: 200px;
+      max-width: 300px;
     }
 
     /* Transactions */
@@ -284,15 +345,6 @@
       main {
         max-width: 1200px;
         margin: 0 auto;
-        display: grid;
-        grid-template-columns: 3fr 2fr;
-        gap: 24px;
-      }
-
-      .right-column {
-        display: flex;
-        flex-direction: column;
-        gap: 24px;
       }
     }
   </style>
@@ -300,6 +352,7 @@
 <body>
   <header>
     <div class="logo">BudgetTrack</div>
+    <div class="current-date" id="currentDate">May 26, 2025</div>
     <nav class="nav-menu">
       <a href="#">Budget</a>
       <a href="#">Transactions</a>
@@ -318,92 +371,100 @@
   </header>
 
   <main>
-    <div class="left-column">
-      <div class="toggle">
-        <button class="active" onclick="updatePerformance('daily')">Daily</button>
-        <button onclick="updatePerformance('weekly')">Weekly</button>
-        <button onclick="updatePerformance('monthly')">Monthly</button>
+    <div class="toggle">
+      <button class="dropdown-button" id="dropdownButton"><span id="dropdownLabel">Weekly: May 26 - Jun 1, 2025</span><i data-feather="chevron-down"></i></button>
+      <div class="dropdown-menu" id="dropdownMenu">
+        <a href="#" onclick="updatePerformance('daily', new Date().toISOString().split('T')[0])">Daily</a>
+        <a href="#" onclick="updatePerformance('weekly', 'May 26 - Jun 1, 2025')">Weekly</a>
+        <a href="#" onclick="updatePerformance('monthly', 'May 2025')">Monthly</a>
+        <a href="#" onclick="updatePerformance('custom', '')">Custom Range</a>
+        <a href="#" onclick="updatePerformance('annual', '2025')">Annual</a>
       </div>
+    </div>
+    <div class="date-picker" id="datePicker">
+      <input type="date" id="dateInput" onchange="updatePerformance('daily', this.value)">
+    </div>
+    <div class="date-picker" id="rangePicker" style="display: none;">
+      <input type="date" id="rangeStart" placeholder="Start Date">
+      <input type="date" id="rangeEnd" placeholder="End Date">
+      <button onclick="updatePerformance('custom', document.getElementById('rangeStart').value + ' - ' + document.getElementById('rangeEnd').value)">Apply</button>
+    </div>
 
-      <div class="weekly-overview">
-        <h2>Weekly Overview</h2>
-        <div class="chart-container">
-          <canvas id="performanceChart"></canvas>
+    <div class="totals">
+      <div class="total-card">
+        <i data-feather="trending-up" style="color: #34C759;"></i>
+        <div>
+          <div class="amount" id="totalIncome">KES 50,000</div>
+          <div class="label">Total Income</div>
         </div>
       </div>
-
-      <div class="transactions">
-        <h2>Last 10 Transactions</h2>
-        <div class="transaction-list">
-          <div class="transaction-item">
-            <div class="transaction-details">
-              <i data-feather="shopping-cart"></i>
-              <span>May 25 | Grocery Store</span>
-            </div>
-            <span style="color: #FF3B30;">-$50</span>
-          </div>
-          <div class="transaction-item">
-            <div class="transaction-details">
-              <i data-feather="dollar-sign"></i>
-              <span>May 24 | Salary</span>
-            </div>
-            <span style="color: #34C759;">+$2,000</span>
-          </div>
-          <!-- Add more transactions as needed -->
+      <div class="total-card">
+        <i data-feather="trending-down" style="color: #FF3B30;"></i>
+        <div>
+          <div class="amount" id="totalExpenses">KES 32,000</div>
+          <div class="label">Total Expenses</div>
         </div>
-        <a href="#" class="view-all">View All</a>
+      </div>
+      <div class="total-card">
+        <i data-feather="archive" style="color: #007AFF;"></i>
+        <div>
+          <div class="amount" id="totalSavings">KES 18,000</div>
+          <div class="label">Total Savings</div>
+        </div>
+      </div>
+      <div class="total-card">
+        <i data-feather="credit-card" style="color: #5856D6;"></i>
+        <div>
+          <div class="amount" id="totalWallet">KES 25,000</div>
+          <div class="label">Wallet Balances</div>
+        </div>
       </div>
     </div>
 
-    <div class="right-column">
-      <div class="totals">
-        <div class="total-card">
-          <i data-feather="trending-up" style="color: #34C759;"></i>
-          <div>
-            <div class="amount">$5,000</div>
-            <div class="label">Total Income</div>
-          </div>
-        </div>
-        <div class="total-card">
-          <i data-feather="trending-down" style="color: #FF3B30;"></i>
-          <div>
-            <div class="amount">$3,200</div>
-            <div class="label">Total Expenses</div>
-          </div>
-        </div>
-        <div class="total-card">
-          <i data-feather="archive" style="color: #007AFF;"></i>
-          <div>
-            <div class="amount">$1,800</div>
-            <div class="label">Total Savings</div>
-          </div>
-        </div>
-        <div class="total-card">
-          <i data-feather="credit-card" style="color: #5856D6;"></i>
-          <div>
-            <div class="amount">$2,500</div>
-            <div class="label">Wallet Balances</div>
-          </div>
-        </div>
+    <div class="trip-summary">
+      <div class="trip-card">
+        <i data-feather="map-pin"></i>
+        <div class="value" id="totalTrips">12</div>
+        <div class="label">Total Trips</div>
       </div>
+      <div class="trip-card">
+        <i data-feather="clock"></i>
+        <div class="value" id="totalHours">45h</div>
+        <div class="label">Total Hours</div>
+      </div>
+      <div class="trip-card">
+        <i data-feather="compass"></i>
+        <div class="value" id="totalDistance">320km</div>
+        <div class="label">Total Distance</div>
+      </div>
+    </div>
 
-      <div class="trip-summary">
-        <div class="trip-card">
-          <i data-feather="map-pin"></i>
-          <div class="value">12</div>
-          <div class="label">Total Trips</div>
+    <div class="charts">
+      <h2 id="chartTitle">Weekly Overview</h2>
+      <div class="chart-container" id="chartContainer">
+        <canvas id="performanceChart"></canvas>
+      </div>
+    </div>
+
+    <div class="transactions">
+      <h2>Last 10 Transactions</h2>
+      <div class="transaction-list" id="transactionList">
+        <div class="transaction-item">
+          <div class="transaction-details">
+            <i data-feather="shopping-cart"></i>
+            <span>May 25 | Grocery Store</span>
+          </div>
+          <span style="color: #FF3B30;">-KES 500</span>
         </div>
-        <div class="trip-card">
-          <i data-feather="clock"></i>
-          <div class="value">45h</div>
-          <div class="label">Total Hours</div>
-        </div>
-        <div class="trip-card">
-          <i data-feather="compass"></i>
-          <div class="value">320km</div>
-          <div class="label">Total Distance</div>
+        <div class="transaction-item">
+          <div class="transaction-details">
+            <i data-feather="dollar-sign"></i>
+            <span>May 24 | Salary</span>
+          </div>
+          <span style="color: #34C759;">+KES 20,000</span>
         </div>
       </div>
+      <a href="#" class="view-all">View All</a>
     </div>
   </main>
 
@@ -416,55 +477,224 @@
     // Initialize Feather Icons
     feather.replace();
 
-    // Performance Toggle
-    const toggleButtons = document.querySelectorAll('.toggle button');
-    toggleButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        toggleButtons.forEach(btn => btn.classList.remove('active'));
-        button.classList.add('active');
-      });
+    // Current Date
+    document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+    // Dropdown Toggle
+    const dropdownButton = document.getElementById('dropdownButton');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+    dropdownButton.addEventListener('click', () => {
+      dropdownMenu.classList.toggle('active');
     });
 
-    // Chart.js for Weekly Overview
-    const ctx = document.getElementById('performanceChart').getContext('2d');
-    const performanceChart = new Chart(ctx, {
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!dropdownButton.contains(e.target) && !dropdownMenu.contains(e.target)) {
+        dropdownMenu.classList.remove('active');
+      }
+    });
+
+    // Chart.js Setup
+    let performanceChart = new Chart(document.getElementById('performanceChart').getContext('2d'), {
       type: 'bar',
       data: {
-        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        labels: ['May 26 - Jun 1'],
         datasets: [
-          {
-            label: 'Income',
-            data: [1000, 1200, 800, 1500, 1100, 900, 1300],
-            backgroundColor: '#34C759',
-          },
-          {
-            label: 'Expenses',
-            data: [600, 700, 500, 800, 650, 400, 600],
-            backgroundColor: '#FF3B30',
-          },
-          {
-            label: 'Savings',
-            data: [400, 500, 300, 700, 450, 500, 700],
-            backgroundColor: '#007AFF',
-          }
+          { label: 'Income', data: [50000], backgroundColor: '#34C759' },
+          { label: 'Expenses', data: [32000], backgroundColor: '#FF3B30' },
+          { label: 'Savings', data: [18000], backgroundColor: '#007AFF' }
         ]
       },
       options: {
         responsive: true,
-        scales: {
-          x: { stacked: false },
-          y: { beginAtZero: true }
-        }
+        scales: { x: { stacked: false }, y: { beginAtZero: true, title: { display: true, text: 'KES' } } }
       }
     });
 
-    // Update Performance Data (Placeholder)
-    function updatePerformance(period) {
-      // Update chart and totals based on period (daily, weekly, monthly)
-      console.log(`Switched to ${period} view`);
-      // Example: Update chart data
-      performanceChart.data.datasets[0].data = period === 'daily' ? [200, 150, 100, 300, 250, 200, 400] : period === 'monthly' ? [4000, 4500, 3800, 5000, 4200, 3900, 4700] : [1000, 1200, 800, 1500, 1100, 900, 1300];
-      performanceChart.update();
+    function updatePerformance(period, value) {
+      const datePicker = document.getElementById('datePicker');
+      const rangePicker = document.getElementById('rangePicker');
+      const chartTitle = document.getElementById('chartTitle');
+      const dropdownLabel = document.getElementById('dropdownLabel');
+      const chartContainer = document.getElementById('chartContainer');
+
+      // Update dropdown label
+      dropdownLabel.textContent = value ? `${period.charAt(0).toUpperCase() + period.slice(1)}: ${value}` : period.charAt(0).toUpperCase() + period.slice(1);
+      dropdownMenu.classList.remove('active');
+
+      // Clear existing chart
+      performanceChart.destroy();
+      chartContainer.innerHTML = '';
+
+      if (period === 'daily') {
+        datePicker.style.display = 'flex';
+        rangePicker.style.display = 'none';
+        chartTitle.textContent = 'Daily Overview';
+        const formattedDate = new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+        // Create three pie charts
+        chartContainer.innerHTML = `
+          <div class="chart-card"><canvas id="incomeChart"></canvas><h3>Income</h3></div>
+          <div class="chart-card"><canvas id="expensesChart"></canvas><h3>Expenses</h3></div>
+          <div class="chart-card"><canvas id="savingsChart"></canvas><h3>Savings</h3></div>
+        `;
+        new Chart(document.getElementById('incomeChart').getContext('2d'), {
+          type: 'pie',
+          data: {
+            labels: ['Bike (60%)', 'Freelance (40%)'],
+            datasets: [{ data: [3000, 2000], backgroundColor: ['#34C759', '#66BB6A'] }]
+          },
+          options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+        });
+        new Chart(document.getElementById('expensesChart').getContext('2d'), {
+          type: 'pie',
+          data: {
+            labels: ['Business: Bike Payments (20%)', 'Business: Fuel (15%)', 'Business: Airtime (5%)', 'Personal: Food (25%)', 'Personal: Phone (10%)', 'Personal: Rent (15%)', 'Personal: Shopping (10%)'],
+            datasets: [{ data: [600, 450, 150, 750, 300, 450, 300], backgroundColor: ['#FF3B30', '#FF6B6B', '#FF9999', '#FFB3B3', '#FFCCCC', '#FFE6E6', '#FFF5F5'] }]
+          },
+          options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+        });
+        new Chart(document.getElementById('savingsChart').getContext('2d'), {
+          type: 'pie',
+          data: {
+            labels: ['Savings (100%)'],
+            datasets: [{ data: [2000], backgroundColor: ['#007AFF'] }]
+          },
+          options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+        });
+
+        // Update totals
+        document.getElementById('totalIncome').textContent = 'KES 5,000';
+        document.getElementById('totalExpenses').textContent = 'KES 3,000';
+        document.getElementById('totalSavings').textContent = 'KES 2,000';
+        document.getElementById('totalWallet').textContent = 'KES 2,500';
+        document.getElementById('totalTrips').textContent = '2';
+        document.getElementById('totalHours').textContent = '5h';
+        document.getElementById('totalDistance').textContent = '50km';
+
+        // Update transactions
+        document.getElementById('transactionList').innerHTML = `
+          <div class="transaction-item">
+            <div class="transaction-details">
+              <i data-feather="shopping-cart"></i>
+              <span>${formattedDate} | Coffee</span>
+            </div>
+            <span style="color: #FF3B30;">-KES 200</span>
+          </div>
+          <div class="transaction-item">
+            <div class="transaction-details">
+              <i data-feather="dollar-sign"></i>
+              <span>${formattedDate} | Freelance</span>
+            </div>
+            <span style="color: #34C759;">+KES 3,000</span>
+          </div>
+        `;
+      } else if (period === 'weekly') {
+        datePicker.style.display = 'none';
+        rangePicker.style.display = 'none';
+        chartTitle.textContent = 'Weekly Overview';
+        chartContainer.innerHTML = '<canvas id="performanceChart"></canvas>';
+        performanceChart = new Chart(document.getElementById('performanceChart').getContext('2d'), {
+          type: 'bar',
+          data: {
+            labels: ['May 26', 'May 27', 'May 28', 'May 29', 'May 30', 'May 31', 'Jun 1'],
+            datasets: [
+              { label: 'Income', data: [10000, 12000, 8000, 15000, 11000, 9000, 13000], backgroundColor: '#34C759' },
+              { label: 'Expenses', data: [6000, 7000, 5000, 8000, 6500, 4000, 6000], backgroundColor: '#FF3B30' },
+              { label: 'Savings', data: [4000, 5000, 3000, 7000, 4500, 5000, 7000], backgroundColor: '#007AFF' }
+            ]
+          },
+          options: { responsive: true, scales: { x: { stacked: false }, y: { beginAtZero: true, title: { display: true, text: 'KES' } } } }
+        });
+
+        // Update totals
+        document.getElementById('totalIncome').textContent = 'KES 50,000';
+        document.getElementById('totalExpenses').textContent = 'KES 32,000';
+        document.getElementById('totalSavings').textContent = 'KES 18,000';
+        document.getElementById('totalWallet').textContent = 'KES 25,000';
+        document.getElementById('totalTrips').textContent = '12';
+        document.getElementById('totalHours').textContent = '45h';
+        document.getElementById('totalDistance').textContent = '320km';
+
+        // Update transactions
+        document.getElementById('transactionList').innerHTML = `
+          <div class="transaction-item">
+            <div class="transaction-details">
+              <i data-feather="shopping-cart"></i>
+              <span>May 25 | Grocery Store</span>
+            </div>
+            <span style="color: #FF3B30;">-KES 500</span>
+          </div>
+          <div class="transaction-item">
+            <div class="transaction-details">
+              <i data-feather="dollar-sign"></i>
+              <span>May 24 | Salary</span>
+            </div>
+            <span style="color: #34C759;">+KES 20,000</span>
+          </div>
+        `;
+      } else if (period === 'monthly' || period === 'annual' || period === 'custom') {
+        datePicker.style.display = 'none';
+        rangePicker.style.display = period === 'custom' ? 'flex' : 'none';
+        chartTitle.textContent = period === 'monthly' ? 'Monthly Overview' : period === 'annual' ? 'Annual Overview' : 'Custom Range Overview';
+        chartContainer.innerHTML = `
+          <div class="chart-card"><canvas id="incomeChart"></canvas><h3>Income</h3></div>
+          <div class="chart-card"><canvas id="expensesChart"></canvas><h3>Expenses</h3></div>
+          <div class="chart-card"><canvas id="savingsChart"></canvas><h3>Savings</h3></div>
+        `;
+        new Chart(document.getElementById('incomeChart').getContext('2d'), {
+          type: 'doughnut',
+          data: {
+            labels: ['Bike (55%)', 'Freelance (45%)'],
+            datasets: [{ data: [110000, 90000], backgroundColor: ['#34C759', '#66BB6A'] }]
+          },
+          options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+        });
+        new Chart(document.getElementById('expensesChart').getContext('2d'), {
+          type: 'doughnut',
+          data: {
+            labels: ['Business: Bike Payments (20%)', 'Business: Fuel (15%)', 'Business: Airtime (5%)', 'Personal: Food (25%)', 'Personal: Phone (10%)', 'Personal: Rent (15%)', 'Personal: Shopping (10%)'],
+            datasets: [{ data: [25600, 19200, 6400, 32000, 12800, 19200, 12800], backgroundColor: ['#FF3B30', '#FF6B6B', '#FF9999', '#FFB3B3', '#FFCCCC', '#FFE6E6', '#FFF5F5'] }]
+          },
+          options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+        });
+        new Chart(document.getElementById('savingsChart').getContext('2d'), {
+          type: 'doughnut',
+          data: {
+            labels: ['Savings (100%)'],
+            datasets: [{ data: [72000], backgroundColor: ['#007AFF'] }]
+          },
+          options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+        });
+
+        // Update totals
+        document.getElementById('totalIncome').textContent = period === 'custom' ? 'KES 100,000' : period === 'annual' ? 'KES 2,400,000' : 'KES 200,000';
+        document.getElementById('totalExpenses').textContent = period === 'custom' ? 'KES 60,000' : period === 'annual' ? 'KES 1,536,000' : 'KES 128,000';
+        document.getElementById('totalSavings').textContent = period === 'custom' ? 'KES 40,000' : period === 'annual' ? 'KES 864,000' : 'KES 72,000';
+        document.getElementById('totalWallet').textContent = period === 'custom' ? 'KES 50,000' : period === 'annual' ? 'KES 300,000' : 'KES 100,000';
+        document.getElementById('totalTrips').textContent = period === 'custom' ? '24' : period === 'annual' ? '144' : '48';
+        document.getElementById('totalHours').textContent = period === 'custom' ? '90h' : period === 'annual' ? '540h' : '180h';
+        document.getElementById('totalDistance').textContent = period === 'custom' ? '640km' : period === 'annual' ? '3840km' : '1280km';
+
+        // Update transactions
+        document.getElementById('transactionList').innerHTML = `
+          <div class="transaction-item">
+            <div class="transaction-details">
+              <i data-feather="shopping-cart"></i>
+              <span>May 25 | Grocery Store</span>
+            </div>
+            <span style="color: #FF3B30;">-KES 500</span>
+          </div>
+          <div class="transaction-item">
+            <div class="transaction-details">
+              <i data-feather="dollar-sign"></i>
+              <span>May 24 | Salary</span>
+            </div>
+            <span style="color: #34C759;">+KES 20,000</span>
+          </div>
+        `;
+      }
+      feather.replace();
     }
   </script>
 </body>
