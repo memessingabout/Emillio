@@ -1,0 +1,1680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BudgetTrack - Income</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background-color: #F8F9FA;
+      color: #1F2A44;
+    }
+
+    header {
+      background-color: #FFFFFF;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 600;
+      color: #00A7A8;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .nav-menu {
+      display: none;
+    }
+
+    .nav-menu a {
+      color: #1F2A44;
+      text-decoration: none;
+      margin: 0 12px;
+      font-size: 16px;
+    }
+
+    .nav-menu a:hover {
+      color: #00A7A8;
+      text-decoration: underline;
+    }
+
+    .hamburger {
+      display: block;
+      cursor: pointer;
+      font-size: 24px;
+      color: #00A7A8;
+    }
+
+    .mobile-dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 16px;
+      background-color: #FFFFFF;
+      border: 1px solid #E5E7EB;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0, 0,0,0.1);
+      z-index: 10;
+      min-width: 160px;
+    }
+
+    .mobile-dropdown.active {
+      display: block;
+    }
+
+    .mobile-dropdown a {
+      display: block;
+      padding: 12px;
+      color: #1F2A44;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .mobile-dropdown a:hover {
+      background-color: #F1F5F9;
+      color: #00A7A8;
+    }
+
+    .greeting-container {
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    .greeting {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1F2A44;
+    }
+
+    .greeting-date,
+    .greeting-time {
+      font-size: 12px;
+      color: #6B7280;
+    }
+
+    .profile-dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background-color: #FFFFFF;
+      border: 1px solid #E5E7EB;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      z-index: 10;
+      min-width: 200px;
+      padding: 12px;
+    }
+
+    .greeting-container:hover .profile-dropdown,
+    .profile-dropdown.active {
+      display: block;
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .profile img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .profile-info .username {
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .profile-info .bio {
+      font-size: 14px;
+      color: #6B7280;
+      max-width: 150px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .grand-total {
+      font-size: 14px;
+      color: #1F2A44;
+      margin-bottom: 12px;
+    }
+
+    .sign-out {
+      display: block;
+      width: 100%;
+      padding: 8px;
+      background-color: #FF3B30;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .date-selector {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .date-range-selector {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .date-range-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .date-range-buttons button {
+      padding: 6px 12px;
+      background-color: #FFFFFF;
+      border: 1px solid #E5E7EB;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .date-range-buttons button.active {
+      background-color: #00A7A8;
+      color: #FFFFFF;
+      border-color: #00A7A8;
+    }
+
+    .date-picker-container {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .date-picker-container input {
+      padding: 6px 12px;
+      border: 1px solid #E5E7EB;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .goal-container {
+      background-color: #FFFFFF;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .goal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .goal-header h3 {
+      font-size: 18px;
+    }
+
+    .goal-progress {
+      height: 20px;
+      background-color: #E5E7EB;
+      border-radius: 10px;
+      margin-bottom: 8px;
+      overflow: hidden;
+    }
+
+    .goal-progress-bar {
+      height: 100%;
+      background-color: #00A7A8;
+      border-radius: 10px;
+      transition: width 0.3s ease;
+    }
+
+    .goal-details {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+    }
+
+    .goal-form {
+      display: none;
+      margin-top: 12px;
+    }
+
+    .goal-form.active {
+      display: block;
+    }
+
+    .goal-form input {
+      padding: 6px 12px;
+      border: 1px solid #E5E7EB;
+      border-radius: 4px;
+      font-size: 14px;
+      margin-right: 8px;
+    }
+
+    .goal-form button {
+      padding: 6px 12px;
+      background-color: #00A7A8;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .income-summary {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      padding: 16px 0;
+    }
+
+    .summary-card {
+      background-color: #FFFFFF;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .summary-card i {
+      font-size: 24px;
+    }
+
+    .summary-card .amount {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .summary-card .label {
+      font-size: 14px;
+      color: #6B7280;
+    }
+
+    .platform-earnings {
+      background-color: #FFFFFF;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 16px;
+      margin: 16px 0;
+    }
+
+    .platform-earnings h3 {
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+
+    .platform-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .platform-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 16px;
+    }
+
+    .tabs {
+      display: flex;
+      margin-bottom: 16px;
+      border-bottom: 1px solid #E5E7EB;
+    }
+
+    .tab {
+      padding: 8px 16px;
+      cursor: pointer;
+      font-size: 16px;
+      color: #6B7280;
+    }
+
+    .tab.active {
+      color: #00A7A8;
+      border-bottom: 2px solid #00A7A8;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .trip-log {
+      padding: 16px;
+    }
+
+    .trip-log h2 {
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+
+    .add-trip-btn {
+      display: inline-block;
+      padding: 8px 16px;
+      background-color: #00A7A8;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+
+    .trip-table {
+      background-color: #FFFFFF;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 12px;
+      text-align: left;
+      font-size: 14px;
+      border-bottom: 1px solid #E5E7EB;
+    }
+
+    th {
+      background-color: #F1F5F9;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    th:hover {
+      background-color: #E5E7EB;
+    }
+
+    td {
+      color: #1F2A44;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background-color: #FFFFFF;
+      border-radius: 8px;
+      padding: 24px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal-content h2 {
+      font-size: 20px;
+      margin-bottom: 16px;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #E5E7EB;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .form-group input[readonly] {
+      background-color: #F1F5F9;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .form-actions button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .form-actions .submit {
+      background-color: #00A7A8;
+      color: #FFFFFF;
+    }
+
+    .form-actions .cancel {
+      background-color: #FF3B30;
+      color: #FFFFFF;
+    }
+
+    .trip-type {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .online-form,
+    .offline-form {
+      display: none;
+    }
+
+    .online-form.active,
+    .offline-form.active {
+      display: block;
+    }
+
+    .duration-hours {
+      display: none;
+    }
+
+    .duration-hours.active {
+      display: block;
+    }
+
+    .other-income-form {
+      display: none;
+      margin-top: 16px;
+    }
+
+    .other-income-form.active {
+      display: block;
+    }
+
+    footer {
+      text-align: center;
+      padding: 16px;
+      color: #6B7280;
+      font-size: 14px;
+    }
+
+    footer a {
+      color: #6B7280;
+      text-decoration: none;
+      margin: 0 8px;
+    }
+
+    @media (min-width: 768px) {
+      header {
+        padding: 24px;
+      }
+
+      .nav-menu {
+        display: flex;
+      }
+
+      .hamburger,
+      .mobile-dropdown {
+        display: none;
+      }
+
+      .income-summary {
+        grid-template-columns: repeat(5, 1fr);
+      }
+
+      .date-selector {
+        flex-wrap: nowrap;
+      }
+
+      th,
+      td {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo-container">
+      <div class="logo">BudgetTrack</div>
+    </div>
+    <div class="header-right">
+      <div class="greeting-container">
+        <div class="greeting" id="greeting">Good Morning, JohnDoe</div>
+        <div class="greeting-date" id="greetingDate">May 26, 2025</div>
+        <div class="greeting-time" id="greetingTime">11:42 AM</div>
+        <div class="profile-dropdown" id="profile-dropdown">
+          <div class="profile">
+            <img src="https://via.placeholder.com/40" alt="Profile Picture">
+            <div class="profile-info">
+              <span class="username">JohnDoe</span>
+              <span class="bio">Tracking my financial journey</span>
+            </div>
+          </div>
+          <div class="grand-total" id="grand-total">Available: KES 3,250</div>
+          <button class="sign-out" onclick="signOut()">Sign Out</button>
+        </div>
+      </div>
+      <nav class="nav-menu">
+        <a href="index.html">Dashboard</a>
+        <a href="income.html">Income</a>
+        <a href="expenses.html">Expenses</a>
+        <a href="savings.html">Savings</a>
+        <a href="settings.html">Settings</a>
+      </nav>
+      <i data-feather="briefcase" class="hamburger"></i>
+      <div class="mobile-dropdown" id="mobile-dropdown">
+        <a href="index.html">Dashboard</a>
+        <a href="income.html">Income</a>
+        <a href="expenses.html">Expenses</a>
+        <a href="savings.html">Savings</a>
+        <a href="settings.html">Settings</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <h1>Income</h1>
+    
+    <!-- Date Selector -->
+    <div class="date-selector">
+      <div class="date-range-selector">
+        <div class="date-range-buttons">
+          <button class="active" onclick="changeDateRange('day')">Day</button>
+          <button onclick="changeDateRange('week')">Week</button>
+          <button onclick="changeDateRange('month')">Month</button>
+          <button onclick="changeDateRange('year')">Year</button>
+        </div>
+        <div class="date-picker-container">
+          <input type="text" id="date-range-start" placeholder="Start Date">
+          <span id="date-range-separator">-</span>
+          <input type="text" id="date-range-end" placeholder="End Date">
+        </div>
+      </div>
+      <button class="add-trip-btn" onclick="openModal()">Add Income</button>
+    </div>
+    
+    <!-- Income Goal -->
+    <div class="goal-container">
+      <div class="goal-header">
+        <h3>Income Goal</h3>
+        <button id="edit-goal-btn" onclick="toggleGoalForm()">Edit Goal</button>
+      </div>
+      <div class="goal-progress">
+        <div class="goal-progress-bar" id="goal-progress-bar" style="width: 65%"></div>
+      </div>
+      <div class="goal-details">
+        <span id="goal-progress-text">KES 3,250 of KES 5,000</span>
+        <span id="goal-percentage">65%</span>
+      </div>
+      <div class="goal-form" id="goal-form">
+        <select id="goal-period">
+          <option value="day">Daily</option>
+          <option value="week">Weekly</option>
+          <option value="month">Monthly</option>
+        </select>
+        <input type="number" id="goal-amount" placeholder="Goal amount (KES)">
+        <button onclick="saveGoal()">Save</button>
+      </div>
+    </div>
+    
+    <!-- Income Tabs -->
+    <div class="tabs">
+      <div class="tab active" onclick="changeTab('summary')">Summary</div>
+      <div class="tab" onclick="changeTab('trips')">Trips</div>
+      <div class="tab" onclick="changeTab('other-income')">Other Income</div>
+    </div>
+    
+    <!-- Summary Tab -->
+    <div class="tab-content active" id="summary-tab">
+      <div class="income-summary">
+        <div class="summary-card">
+          <i data-feather="dollar-sign" style="color: #34C759;"></i>
+          <div>
+            <div class="amount" id="total-income">KES 4,250</div>
+            <div class="label">Total Income</div>
+          </div>
+        </div>
+        <div class="summary-card">
+          <i data-feather="clock" style="color: #007AFF;"></i>
+          <div>
+            <div class="amount" id="total-hours">3h 15m</div>
+            <div class="label">Total Hours Worked</div>
+          </div>
+        </div>
+        <div class="summary-card">
+          <i data-feather="compass" style="color: #5856D6;"></i>
+          <div>
+            <div class="amount" id="total-distance">45km</div>
+            <div class="label">Total Distance</div>
+          </div>
+        </div>
+        <div class="summary-card">
+          <i data-feather="trending-up" style="color: #34C759;"></i>
+          <div>
+            <div class="amount" id="earnings-per-hour">KES 1,308/hr</div>
+            <div class="label">Earnings per Hour</div>
+          </div>
+        </div>
+        <div class="summary-card">
+          <i data-feather="map-pin" style="color: #5856D6;"></i>
+          <div>
+            <div class="amount" id="earnings-per-km">KES 94/km</div>
+            <div class="label">Earnings per Km</div>
+          </div>
+        </div>
+        <div class="summary-card">
+          <i data-feather="percent" style="color: #FF3B30;"></i>
+          <div>
+            <div class="amount" id="total-service-fee">KES 325</div>
+            <div class="label">Total Service Fee</div>
+          </div>
+        </div>
+        <div class="summary-card">
+          <i data-feather="credit-card" style="color: #5856D6;"></i>
+          <div>
+            <div class="amount" id="wallet-balance">KES 3,250</div>
+            <div class="label">Wallet Balance</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="platform-earnings">
+        <h3>Earnings per Platform</h3>
+        <div class="platform-list">
+          <div class="platform-item">
+            <span>Uber</span>
+            <span>KES 2,250</span>
+          </div>
+          <div class="platform-item">
+            <span>Bolt</span>
+            <span>KES 1,000</span>
+          </div>
+          <div class="platform-item">
+            <span>Offline</span>
+            <span>KES 1,000</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Trips Tab -->
+    <div class="tab-content" id="trips-tab">
+      <div class="trip-log">
+        <div class="trip-table">
+          <table id="trip-table">
+            <thead>
+              <tr>
+                <th onclick="sortTable(0)">Date <i data-feather="chevron-down"></i></th>
+                <th>Time</th>
+                <th>Platform</th>
+                <th>Distance (km)</th>
+                <th>Duration</th>
+                <th>Total Fare (KES)</th>
+                <th>Cash Collected (KES)</th>
+                <th>Discount (KES)</th>
+                <th>Discount Rate</th>
+                <th>Service Fee (KES)</th>
+                <th>My Earnings (KES)</th>
+                <th>Payout (KES)</th>
+              </tr>
+            </thead>
+            <tbody id="trip-list">
+              <!-- Populated by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Other Income Tab -->
+    <div class="tab-content" id="other-income-tab">
+      <div class="trip-log">
+        <button class="add-trip-btn" onclick="openOtherIncomeModal()">Add Other Income</button>
+        <div class="trip-table">
+          <table id="other-income-table">
+            <thead>
+              <tr>
+                <th onclick="sortOtherIncomeTable(0)">Date <i data-feather="chevron-down"></i></th>
+                <th>Source</th>
+                <th>Amount (KES)</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody id="other-income-list">
+              <!-- Populated by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Trip Modal -->
+    <div class="modal" id="trip-modal">
+      <div class="modal-content">
+        <h2>Add Income</h2>
+        <div class="trip-type">
+          <label><input type="radio" name="trip-type" value="online" checked onclick="toggleForm()"> Online</label>
+          <label><input type="radio" name="trip-type" value="offline" onclick="toggleForm()"> Offline</label>
+          <label><input type="radio" name="trip-type" value="other" onclick="toggleForm()"> Other</label>
+        </div>
+        <form class="online-form active" id="online-form">
+          <div class="form-group">
+            <label for="platform">Platform</label>
+            <select id="platform" onchange="updateOnlineForm()">
+              <option value="Uber">Uber</option>
+              <option value="Bolt">Bolt</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="uber-date">Date</label>
+            <input type="text" id="uber-date" placeholder="Select date">
+          </div>
+          <div class="form-group">
+            <label for="uber-time">Time</label>
+            <input type="text" id="uber-time" placeholder="Select time">
+          </div>
+          <div class="form-group">
+            <label for="duration">Duration (e.g., 45m 30s)</label>
+            <input type="text" id="duration" placeholder="e.g., 45m 30s">
+          </div>
+          <div class="form-group duration-hours">
+            <label for="duration-hours">Duration (hours)</label>
+            <input type="number" id="duration-hours" min="0">
+          </div>
+          <div class="form-group">
+            <label for="distance">Distance (km)</label>
+            <input type="number" id="distance" step="0.1" min="0">
+          </div>
+          <div class="form-group">
+            <label for="total-fare">Total Fare (KES)</label>
+            <input type="number" id="total-fare" step="0.01" min="0">
+          </div>
+          <div class="form-group">
+            <label for="cash-collected">Cash Collected (KES)</label>
+            <input type="number" id="cash-collected" step="0.01" min="0">
+          </div>
+          <div class="form-group">
+            <label for="service-fee">Service Fee (KES, 18% commission + 3% taxes)</label>
+            <input type="number" id="service-fee" step="0.01" min="0">
+          </div>
+          <div class="form-group">
+            <label for="my-earnings">My Earnings (KES)</label>
+            <input type="text" id="my-earnings" readonly>
+          </div>
+          <div class="form-group">
+            <label for="payout">Payout (KES)</label>
+            <input type="text" id="payout" readonly>
+          </div>
+        </form>
+        <form class="offline-form" id="offline-form">
+          <div class="form-group">
+            <label for="offline-date-time">Date & Time</label>
+            <input type="text" id="offline-date-time" placeholder="Select date and time">
+          </div>
+          <div class="form-group">
+            <label for="fare">Fare (KES)</label>
+            <input type="number" id="fare" step="0.01" min="0">
+          </div>
+          <div class="form-group">
+            <label for="offline-my-earnings">My Earnings (KES)</label>
+            <input type="text" id="offline-my-earnings" readonly>
+          </div>
+          <div class="form-group">
+            <label for="offline-payout">Payout (KES)</label>
+            <input type="text" id="offline-payout" readonly>
+          </div>
+        </form>
+        <form class="other-income-form" id="other-income-form">
+          <div class="form-group">
+            <label for="other-income-date">Date</label>
+            <input type="text" id="other-income-date" placeholder="Select date">
+          </div>
+          <div class="form-group">
+            <label for="income-source">Source</label>
+            <select id="income-source">
+              <option value="Freelance">Freelance</option>
+              <option value="Investment">Investment</option>
+              <option value="Gift">Gift</option>
+              <option value="Salary">Salary</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="income-amount">Amount (KES)</label>
+            <input type="number" id="income-amount" step="0.01" min="0">
+          </div>
+          <div class="form-group">
+            <label for="income-description">Description</label>
+            <input type="text" id="income-description" placeholder="Optional description">
+          </div>
+        </form>
+        <div class="form-actions">
+          <button class="submit" onclick="submitIncome()">Submit</button>
+          <button class="cancel" onclick="closeModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <a href="terms.html">Terms</a> | <a href="privacy.html">Privacy</a> | <a href="support.html">Support</a>
+    <div>v1.0.0</div>
+  </footer>
+
+  <script>
+    // Initialize Feather Icons
+    feather.replace();
+
+    // Username
+    const username = 'JohnDoe';
+
+    // Time-Based Greeting
+    const hours = new Date().getHours();
+    let greetingText;
+    if (hours >= 0 && hours < 12) {
+      greetingText = `Good Morning, ${username}`;
+    } else if (hours >= 12 && hours < 17) {
+      greetingText = `Good Afternoon, ${username}`;
+    } else {
+      greetingText = `Good Evening, ${username}`;
+    }
+    document.getElementById('greeting').textContent = greetingText;
+
+    // Current Date and Time
+    const now = new Date();
+    document.getElementById('greeting-date').textContent = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    document.getElementById('greeting-time').textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+    // Profile Dropdown Toggle
+    const greetingContainer = document.querySelector('.greeting-container');
+    const profileDropdown = document.getElementById('profile-dropdown');
+    greetingContainer.addEventListener('click', () => {
+      profileDropdown.classList.toggle('active');
+    });
+    document.addEventListener('click', (e) => {
+      if (!greetingContainer.contains(e.target)) {
+        profileDropdown.classList.remove('active');
+      }
+    });
+
+    // Mobile Dropdown Toggle
+    const hamburger = document.querySelector('.hamburger');
+    const mobileDropdown = document.getElementById('mobile-dropdown');
+    hamburger.addEventListener('click', () => {
+      mobileDropdown.classList.toggle('active');
+    });
+    document.addEventListener('click', (e) => {
+      if (!hamburger.contains(e.target) && !mobileDropdown.contains(e.target)) {
+        mobileDropdown.classList.remove('active');
+      }
+    });
+    mobileDropdown.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileDropdown.classList.remove('active');
+      });
+    });
+
+    // Sign Out
+    function signOut() {
+      alert('Signed out!');
+    }
+
+    // Flatpickr Initialization
+    flatpickr('#uber-date', {
+      dateFormat: 'Y-m-d',
+      defaultDate: new Date(),
+      maxDate: new Date()
+    });
+    flatpickr('#uber-time', {
+      enableTime: true,
+      noCalendar: true,
+      dateFormat: 'H:i',
+      defaultDate: new Date()
+    });
+    flatpickr('#offline-date-time', {
+      enableTime: true,
+      dateFormat: 'Y-m-d H:i',
+      defaultDate: new Date()
+    });
+    flatpickr('#other-income-date', {
+      dateFormat: 'Y-m-d',
+      defaultDate: new Date(),
+      maxDate: new Date()
+    });
+    
+    // Date Range Selector
+    const dateRangeStart = flatpickr('#date-range-start', {
+      dateFormat: 'Y-m-d',
+      defaultDate: new Date(),
+      onChange: function(selectedDates, dateStr) {
+        dateRangeEnd.set('minDate', dateStr);
+        filterTripsByDateRange();
+      }
+    });
+    
+    const dateRangeEnd = flatpickr('#date-range-end', {
+      dateFormat: 'Y-m-d',
+      defaultDate: new Date(),
+      onChange: function(selectedDates, dateStr) {
+        dateRangeStart.set('maxDate', dateStr);
+        filterTripsByDateRange();
+      }
+    });
+    
+    // Set initial date range to today
+    const today = new Date();
+    dateRangeStart.setDate(today);
+    dateRangeEnd.setDate(today);
+    
+    function changeDateRange(range) {
+      const startDate = new Date();
+      const endDate = new Date();
+      
+      // Update active button
+      document.querySelectorAll('.date-range-buttons button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+      
+      // Set date range based on selection
+      switch(range) {
+        case 'day':
+          dateRangeStart.setDate(startDate);
+          dateRangeEnd.setDate(endDate);
+          break;
+        case 'week':
+          startDate.setDate(startDate.getDate() - startDate.getDay());
+          endDate.setDate(endDate.getDate() + (6 - endDate.getDay()));
+          dateRangeStart.setDate(startDate);
+          dateRangeEnd.setDate(endDate);
+          break;
+        case 'month':
+          startDate.setDate(1);
+          endDate.setMonth(endDate.getMonth() + 1);
+          endDate.setDate(0);
+          dateRangeStart.setDate(startDate);
+          dateRangeEnd.setDate(endDate);
+          break;
+        case 'year':
+          startDate.setMonth(0);
+          startDate.setDate(1);
+          endDate.setMonth(11);
+          endDate.setDate(31);
+          dateRangeStart.setDate(startDate);
+          dateRangeEnd.setDate(endDate);
+          break;
+      }
+      
+      filterTripsByDateRange();
+    }
+    
+    function filterTripsByDateRange() {
+      const startDate = dateRangeStart.selectedDates[0];
+      const endDate = dateRangeEnd.selectedDates[0];
+      
+      // Filter trips and other income
+      const filteredTrips = initialTrips.filter(trip => {
+        const tripDate = new Date(trip.date);
+        return tripDate >= startDate && tripDate <= endDate;
+      });
+      
+      const filteredOtherIncome = otherIncome.filter(income => {
+        const incomeDate = new Date(income.date);
+        return incomeDate >= startDate && incomeDate <= endDate;
+      });
+      
+      // Update displays
+      trips = filteredTrips;
+      updateTripLog();
+      updateSummary();
+      updateOtherIncomeList();
+    }
+
+    // Income Goal
+    let incomeGoal = {
+      period: 'day',
+      amount: 5000
+    };
+    
+    // Load goal from localStorage if available
+    const savedGoal = localStorage.getItem('incomeGoal');
+    if (savedGoal) {
+      incomeGoal = JSON.parse(savedGoal);
+      document.getElementById('goal-period').value = incomeGoal.period;
+      document.getElementById('goal-amount').value = incomeGoal.amount;
+    }
+    
+    function toggleGoalForm() {
+      const form = document.getElementById('goal-form');
+      form.classList.toggle('active');
+    }
+    
+    function saveGoal() {
+      const period = document.getElementById('goal-period').value;
+      const amount = parseFloat(document.getElementById('goal-amount').value);
+      
+      if (!amount || amount <= 0) {
+        alert('Please enter a valid goal amount');
+        return;
+      }
+      
+      incomeGoal = {
+        period,
+        amount
+      };
+      
+      // Save to localStorage
+      localStorage.setItem('incomeGoal', JSON.stringify(incomeGoal));
+      
+      // Update UI
+      updateGoalProgress();
+      toggleGoalForm();
+    }
+    
+    function updateGoalProgress() {
+      const totalIncome = trips.reduce((sum, trip) => sum + (trip.totalFare || trip.fare || 0), 0) +
+                         otherIncome.reduce((sum, income) => sum + (income.amount || 0), 0);
+      
+      const progress = Math.min((totalIncome / incomeGoal.amount) * 100, 100);
+      
+      document.getElementById('goal-progress-bar').style.width = `${progress}%`;
+      document.getElementById('goal-progress-text').textContent = 
+        `KES ${totalIncome.toLocaleString()} of KES ${incomeGoal.amount.toLocaleString()}`;
+      document.getElementById('goal-percentage').textContent = `${Math.round(progress)}%`;
+    }
+
+    // Tab Navigation
+    function changeTab(tab) {
+      // Update active tab
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      // Show corresponding content
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      document.getElementById(`${tab}-tab`).classList.add('active');
+    }
+
+    // Modal Control
+    function openModal() {
+      try {
+        const modal = document.getElementById('trip-modal');
+        if (!modal) throw new Error('Modal element not found');
+        modal.classList.add('active');
+        toggleForm();
+        updateOnlineForm();
+      } catch (error) {
+        console.error('Error opening modal:', error);
+        alert('Failed to open modal. Please try again.');
+      }
+    }
+    
+    function openOtherIncomeModal() {
+      const modal = document.getElementById('trip-modal');
+      modal.classList.add('active');
+      document.querySelector('input[name="trip-type"][value="other"]').checked = true;
+      toggleForm();
+    }
+
+    function closeModal() {
+      document.getElementById('trip-modal').classList.remove('active');
+      document.getElementById('online-form').reset();
+      document.getElementById('offline-form').reset();
+      document.getElementById('other-income-form').reset();
+      document.querySelector('.duration-hours').classList.remove('active');
+      updateOnlineCalculations();
+      updateOfflineCalculations();
+      document.querySelector('input[name="trip-type"][value="online"]').checked = true;
+      toggleForm();
+    }
+
+    // Toggle Form
+    function toggleForm() {
+      const tripType = document.querySelector('input[name="trip-type"]:checked').value;
+      const onlineForm = document.getElementById('online-form');
+      const offlineForm = document.getElementById('offline-form');
+      const otherIncomeForm = document.getElementById('other-income-form');
+      
+      onlineForm.classList.toggle('active', tripType === 'online');
+      offlineForm.classList.toggle('active', tripType === 'offline');
+      otherIncomeForm.classList.toggle('active', tripType === 'other');
+      
+      if (tripType === 'online') updateOnlineForm();
+    }
+
+    // Update Online Form
+    function updateOnlineForm() {
+      const platform = document.getElementById('platform').value;
+      const durationGroup = document.querySelector('.duration-hours');
+      const durationInput = document.getElementById('duration');
+      if (platform === 'Uber') {
+        durationGroup.classList.remove('active');
+        durationInput.placeholder = 'e.g., 45m 30s';
+      } else {
+        durationGroup.classList.add('active');
+        durationInput.placeholder = 'e.g., 30m 0s';
+      }
+    }
+
+    // Sample Trips
+    const initialTrips = [
+      {
+        type: 'online', date: '2025-05-26', time: '14:30', platform: 'Uber', duration: '45m 30s',
+        distance: 20, totalFare: 1500, cashCollected: 1200, serviceFee: 315,
+        myEarnings: 1185, payout: -15
+      },
+      {
+        type: 'online', date: '2025-05-26', time: '10:00', platform: 'Bolt', duration: '30m 0s',
+        distance: 15, totalFare: 1000, cashCollected: 0, serviceFee: 100,
+        discount: 0, discountRate: '0.00%', myEarnings: 900, payout: 900
+      },
+      {
+        type: 'online', date: '2025-05-25', time: '16:00', platform: 'Uber', duration: '1h 30m 0s',
+        distance: 10, totalFare: 750, cashCollected: 750, serviceFee: 157.5,
+        myEarnings: 592.5, payout: -157.5
+      },
+      {
+        type: 'offline', date: '2025-05-25', time: '12:00', platform: 'Offline', duration: '',
+        distance: 0, totalFare: 500, cashCollected: 0, serviceFee: 0,
+        discount: '', discountRate: '', myEarnings: 500, payout: 500
+      },
+      {
+        type: 'offline', date: '2025-05-24', time: '09:30', platform: 'Offline', duration: '',
+        distance: 0, totalFare: 500, cashCollected: 0, serviceFee: 0,
+        discount: '', discountRate: '', myEarnings: 500, payout: 500
+      }
+    ];
+
+    // Other Income
+    const initialOtherIncome = [
+      { date: '2025-05-26', source: 'Freelance', amount: 1000, description: 'Web design project' },
+      { date: '2025-05-25', source: 'Investment', amount: 500, description: 'Dividends' },
+      { date: '2025-05-20', source: 'Gift', amount: 200, description: 'Birthday gift' }
+    ];
+    
+    let otherIncome = JSON.parse(localStorage.getItem('otherIncomeData')) || initialOtherIncome;
+    localStorage.setItem('otherIncomeData', JSON.stringify(otherIncome));
+
+    // Load or Initialize Trips
+    let trips = JSON.parse(localStorage.getItem('tripsData')) || initialTrips;
+    localStorage.setItem('tripsData', JSON.stringify(trips));
+
+    // Update Trip Log
+    function updateTripLog() {
+      const tbody = document.getElementById('trip-list');
+      tbody.innerHTML = '';
+      trips.forEach(trip => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${trip.date}</td>
+          <td>${trip.time}</td>
+          <td>${trip.platform}</td>
+          <td>${trip.distance || '-'}</td>
+          <td>${trip.duration || '-'}</td>
+          <td>KES ${(trip.totalFare || 0).toLocaleString()}</td>
+          <td>KES ${(trip.cashCollected || 0).toLocaleString()}</td>
+          <td>${trip.discount ? 'KES ' + trip.discount.toLocaleString() : '-'}</td>
+          <td>${trip.discountRate || '-'}</td>
+          <td>KES ${(trip.serviceFee || 0).toLocaleString()}</td>
+          <td>KES ${(trip.myEarnings || 0).toLocaleString()}</td>
+          <td>KES ${(trip.payout || 0).toLocaleString()}</td>
+        `;
+        tbody.appendChild(row);
+      });
+      feather.replace();
+    }
+    
+    // Update Other Income List
+    function updateOtherIncomeList() {
+      const tbody = document.getElementById('other-income-list');
+      tbody.innerHTML = '';
+      otherIncome.forEach(income => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${income.date}</td>
+          <td>${income.source}</td>
+          <td>KES ${income.amount.toLocaleString()}</td>
+          <td>${income.description || '-'}</td>
+        `;
+        tbody.appendChild(row);
+      });
+      feather.replace();
+    }
+
+    // Update Summary Metrics
+    function updateSummary() {
+      const totalIncome = trips.reduce((sum, trip) => sum + (trip.totalFare || trip.fare || 0), 0) +
+                         otherIncome.reduce((sum, income) => sum + (income.amount || 0), 0);
+      const totalHours = trips.reduce((sum, trip) => {
+        if (trip.type === 'online' && trip.duration) {
+          let hours = 0, minutes = 0, seconds = 0;
+          if (trip.duration.includes('h')) {
+            [hours, minutes, seconds] = trip.duration.match(/\d+/g).map(Number);
+          } else {
+            [minutes, seconds] = trip.duration.match(/\d+/g).map(Number);
+          }
+          return sum + hours + minutes / 60 + seconds / 3600;
+        }
+        return sum;
+      }, 0);
+      const totalDistance = trips.reduce((sum, trip) => sum + (trip.distance || 0), 0);
+      const totalServiceFee = trips.reduce((sum, trip) => sum + (trip.serviceFee || 0), 0);
+      const walletBalance = trips.reduce((sum, trip) => sum + (trip.payout || 0), 0) +
+                          otherIncome.reduce((sum, income) => sum + (income.amount || 0), 0);
+
+      document.getElementById('total-income').textContent = `KES ${totalIncome.toLocaleString()}`;
+      document.getElementById('total-hours').textContent = `${Math.floor(totalHours)}h ${Math.round((totalHours % 1) * 60)}m`;
+      document.getElementById('total-distance').textContent = `${totalDistance.toFixed(1)}km`;
+      document.getElementById('earnings-per-hour').textContent = totalHours > 0 ? `KES ${(totalIncome / totalHours).toFixed(0)}/hr` : 'KES 0/hr';
+      document.getElementById('earnings-per-km').textContent = totalDistance > 0 ? `KES ${(totalIncome / totalDistance).toFixed(0)}/km` : 'KES 0/km';
+      document.getElementById('total-service-fee').textContent = `KES ${totalServiceFee.toLocaleString()}`;
+      document.getElementById('wallet-balance').textContent = `KES ${walletBalance.toLocaleString()}`;
+      document.getElementById('grand-total').textContent = `Available: KES ${walletBalance.toLocaleString()}`;
+
+      const platformEarnings = trips.reduce((acc, trip) => {
+        const platform = trip.platform || 'Offline';
+        acc[platform] = (acc[platform] || 0) + (trip.totalFare || trip.fare || 0);
+        return acc;
+      }, {});
+      const platformList = document.querySelector('.platform-list');
+      platformList.innerHTML = '';
+      for (const [platform, earnings] of Object.entries(platformEarnings)) {
+        const item = document.createElement('div');
+        item.className = 'platform-item';
+        item.innerHTML = `<span>${platform}</span><span>KES ${earnings.toLocaleString()}</span>`;
+        platformList.appendChild(item);
+      }
+      
+      // Update goal progress
+      updateGoalProgress();
+    }
+
+    // Online Calculations
+    function updateOnlineCalculations() {
+      const platform = document.getElementById('platform').value;
+      if (platform === 'Uber') {
+        const totalFare = parseFloat(document.getElementById('total-fare').value) || 0;
+        const cashCollected = parseFloat(document.getElementById('cash-collected').value) || 0;
+        const serviceFee = parseFloat(document.getElementById('service-fee').value) || 0;
+        const myEarnings = totalFare - serviceFee;
+        const payout = totalFare - serviceFee - cashCollected;
+
+        document.getElementById('my-earnings').value = `KES ${myEarnings.toLocaleString()}`;
+        document.getElementById('payout').value = `KES ${payout.toLocaleString()}`;
+      } else {
+        const totalFare = parseFloat(document.getElementById('total-fare').value) || 0;
+        const cashCollected = parseFloat(document.getElementById('cash-collected').value) || 0;
+        const serviceFee = totalFare * 0.1;
+        let discount = 0;
+        let discountRate = '0.00%';
+        if (cashCollected > 0 && cashCollected < totalFare) {
+          discount = totalFare - cashCollected;
+          discountRate = ((discount / totalFare) * 100).toFixed(2) + '%';
+        }
+        const myEarnings = totalFare - serviceFee;
+        const payout = myEarnings;
+
+        document.getElementById('service-fee').value = `KES ${serviceFee.toLocaleString()}`;
+        document.getElementById('my-earnings').value = `KES ${myEarnings.toLocaleString()}`;
+        document.getElementById('payout').value = `KES ${payout.toLocaleString()}`;
+      }
+    }
+
+    // Offline Calculations
+    function updateOfflineCalculations() {
+      const fare = parseFloat(document.getElementById('fare').value) || 0;
+      document.getElementById('offline-my-earnings').value = `KES ${fare.toLocaleString()}`;
+      document.getElementById('offline-payout').value = `KES ${fare.toLocaleString()}`;
+    }
+
+    // Duration Hours Toggle
+    document.getElementById('duration').addEventListener('input', () => {
+      const duration = document.getElementById('duration').value;
+      const durationHoursGroup = document.querySelector('.duration-hours');
+      const match = duration.match(/(\d+)m\s*(\d*)s?/);
+      if (match && parseInt(match[1]) >= 60) {
+        durationHoursGroup.classList.add('active');
+        const hours = Math.floor(parseInt(match[1]) / 60);
+        const minutes = parseInt(match[1]) % 60;
+        const seconds = match[2] ? parseInt(match[2]) : 0;
+        document.getElementById('duration-hours').value = hours;
+        document.getElementById('duration').value = `${minutes}m ${seconds}s`;
+      } else {
+        durationHoursGroup.classList.remove('active');
+      }
+      updateOnlineCalculations();
+    });
+
+    document.getElementById('total-fare').addEventListener('input', updateOnlineCalculations);
+    document.getElementById('cash-collected').addEventListener('input', updateOnlineCalculations);
+    document.getElementById('service-fee').addEventListener('input', updateOnlineCalculations);
+    document.getElementById('fare').addEventListener('input', updateOfflineCalculations);
+
+    // Submit Income
+    function submitIncome() {
+      const tripType = document.querySelector('input[name="trip-type"]:checked').value;
+
+      if (tripType === 'online') {
+        const platform = document.getElementById('platform').value;
+        if (platform === 'Uber') {
+          const date = document.getElementById('uber-date').value;
+          const time = document.getElementById('uber-time').value;
+          const duration = document.getElementById('duration').value;
+          const durationHours = parseInt(document.getElementById('duration-hours').value) || 0;
+          const distance = parseFloat(document.getElementById('distance').value) || 0;
+          const totalFare = parseFloat(document.getElementById('total-fare').value) || 0;
+          const cashCollected = parseFloat(document.getElementById('cash-collected').value) || 0;
+          const serviceFee = parseFloat(document.getElementById('service-fee').value) || 0;
+
+          // Validation
+          if (!date || !time || !duration || distance <= 0 || totalFare <= 0 || serviceFee < 0) {
+            alert('Please fill all required fields with valid values for Uber trip.');
+            return;
+          }
+          if (cashCollected > totalFare) {
+            alert('Cash Collected cannot exceed Total Fare.');
+            return;
+          }
+
+          // Parse duration
+          const match = duration.match(/(\d+)m\s*(\d*)s?/);
+          if (!match) {
+            alert('Invalid duration format. Use e.g., "45m 30s".');
+            return;
+          }
+          let minutes = parseInt(match[1]);
+          const seconds = match[2] ? parseInt(match[2]) : 0;
+          if (seconds >= 60) {
+            alert('Seconds must be less than 60.');
+            return;
+          }
+          if (durationHours > 0) {
+            minutes += durationHours * 60;
+          }
+          const formattedDuration = durationHours > 0 ? `${durationHours}h ${minutes % 60}m ${seconds}s` : `${minutes}m ${seconds}s`;
+
+          const myEarnings = totalFare - serviceFee;
+          const payout = totalFare - serviceFee - cashCollected;
+
+          trips.push({
+            type: 'online', date, time, platform, distance, duration: formattedDuration,
+            totalFare, cashCollected, serviceFee, myEarnings, payout
+          });
+        } else {
+          // Bolt Trip
+          const dateTime = document.getElementById('uber-date').value + ' ' + document.getElementById('uber-time').value;
+          const distance = parseFloat(document.getElementById('distance').value) || 0;
+          const durationMinutes = parseInt(document.getElementById('duration').value.match(/\d+/)[0]) || 0;
+          const durationSeconds = parseInt(document.getElementById('duration').value.match(/\d+/g)?.[1]) || 0;
+          const totalFare = parseFloat(document.getElementById('total-fare').value) || 0;
+          const cashCollected = parseFloat(document.getElementById('cash-collected').value) || 0;
+
+          // Validation
+          if (!dateTime || distance <= 0 || (durationMinutes === 0 && durationSeconds === 0) || totalFare <= 0) {
+            alert('Please fill all required fields with valid values for Bolt trip.');
+            return;
+          }
+          if (cashCollected > totalFare) {
+            alert('Cash Collected cannot exceed Total Fare.');
+            return;
+          }
+
+          const date = dateTime.split(' ')[0];
+          const time = dateTime.split(' ')[1];
+          const duration = `${durationMinutes}m ${durationSeconds}s`;
+          const serviceFee = totalFare * 0.1;
+          let discount = 0;
+          let discountRate = '0.00%';
+          if (cashCollected > 0 && cashCollected < totalFare) {
+            discount = totalFare - cashCollected;
+            discountRate = ((discount / totalFare) * 100).toFixed(2) + '%';
+          }
+          const myEarnings = totalFare - serviceFee;
+          const payout = myEarnings;
+
+          trips.push({
+            type: 'online', date, time, platform, distance, duration, totalFare,
+            cashCollected, serviceFee, discount, discountRate, myEarnings, payout
+          });
+        }
+      } else if (tripType === 'offline') {
+        const dateTime = document.getElementById('offline-date-time').value;
+        const fare = parseFloat(document.getElementById('fare').value) || 0;
+
+        // Validation
+        if (!dateTime || fare <= 0) {
+          alert('Please fill all required fields with valid values for offline trip.');
+          return;
+        }
+
+        const date = dateTime.split(' ')[0];
+        const time = dateTime.split(' ')[1];
+
+        trips.push({
+          type: 'offline', date, time, platform: 'Offline', distance: 0, duration: '',
+          totalFare: fare, cashCollected: 0, serviceFee: 0, discount: '', discountRate: '',
+          myEarnings: fare, payout: fare
+        });
+      } else {
+        // Other Income
+        const date = document.getElementById('other-income-date').value;
+        const source = document.getElementById('income-source').value;
+        const amount = parseFloat(document.getElementById('income-amount').value) || 0;
+        const description = document.getElementById('income-description').value;
+
+        // Validation
+        if (!date || amount <= 0) {
+          alert('Please fill all required fields with valid values for other income.');
+          return;
+        }
+
+        otherIncome.push({
+          date, source, amount, description
+        });
+      }
+
+      localStorage.setItem('tripsData', JSON.stringify(trips));
+      localStorage.setItem('otherIncomeData', JSON.stringify(otherIncome));
+      updateTripLog();
+      updateOtherIncomeList();
+      updateSummary();
+      closeModal();
+    }
+
+    // Table Sorting
+    function sortTable(columnIndex) {
+      const table = document.getElementById('trip-table');
+      const tbody = document.getElementById('trip-list');
+      const rows = Array.from(tbody.querySelectorAll('tr'));
+      const isAscending = table.dataset.sortOrder !== 'asc';
+      table.dataset.sortOrder = isAscending ? 'asc' : 'desc';
+
+      rows.sort((a, b) => {
+        let aValue = a.cells[columnIndex].textContent.trim();
+        let bValue = b.cells[columnIndex].textContent.trim();
+
+        if (columnIndex === 0) { // Date
+          aValue = new Date(aValue);
+          bValue = new Date(bValue);
+          return isAscending ? aValue - bValue : bValue - aValue;
+        }
+        if (columnIndex === 1) { // Time
+          aValue = aValue.split(':').map(Number);
+          bValue = bValue.split(':').map(Number);
+          aValue = aValue[0] * 60 + aValue[1];
+          bValue = bValue[0] * 60 + bValue[1];
+          return isAscending ? aValue - bValue : bValue - aValue;
+        }
+        if ([3, 5, 6, 7, 9, 10, 11].includes(columnIndex)) { // Numeric
+          aValue = parseFloat(aValue.replace(/KES |,/g, '')) || 0;
+          bValue = parseFloat(bValue.replace(/KES |,/g, '')) || 0;
+          return isAscending ? aValue - bValue : bValue - aValue;
+        }
+        if (columnIndex === 4) { // Duration
+          if (aValue === '-') return isAscending ? 1 : -1;
+          if (bValue === '-') return isAscending ? -1 : 1;
+          const parseDuration = (str) => {
+            let hours = 0, minutes = 0, seconds = 0;
+            if (str.includes('h')) {
+              [hours, minutes, seconds] = str.match(/\d+/g).map(Number);
+            } else {
+              [minutes, seconds] = str.match(/\d+/g).map(Number);
+            }
+            return hours * 3600 + minutes * 60 + seconds;
+          };
+          aValue = parseDuration(aValue);
+          bValue = parseDuration(bValue);
+          return isAscending ? aValue - bValue : bValue - aValue;
+        }
+        if (columnIndex === 8) { // Discount Rate
+          aValue = parseFloat(aValue.replace('%', '')) || 0;
+          bValue = parseFloat(bValue.replace('%', '')) || 0;
+          return isAscending ? aValue - bValue : bValue - aValue;
+        }
+        // String (Platform)
+        return isAscending ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+      });
+
+      tbody.innerHTML = '';
+      rows.forEach(row => tbody.appendChild(row));
+
+      const headers = table.querySelectorAll('th');
+      headers.forEach((header, index) => {
+        const icon = header.querySelector('i');
+        if (index === columnIndex) {
+          icon.setAttribute('data-feather', isAscending ? 'chevron-up' : 'chevron-down');
+        } else {
+          icon.setAttribute('data-feather', 'chevron-down');
+        }
+      });
+      feather.replace();
+    }
+    
+    function sortOtherIncomeTable(columnIndex) {
+      const table = document.getElementById('other-income-table');
+      const tbody = document.getElementById('other-income-list');
+      const rows = Array.from(tbody.querySelectorAll('tr'));
+      const isAscending = table.dataset.sortOrder !== 'asc';
+      table.dataset.sortOrder = isAscending ? 'asc' : 'desc';
+
+      rows.sort((a, b) => {
+        let aValue = a.cells[columnIndex].textContent.trim();
+        let bValue = b.cells[columnIndex].textContent.trim();
+
+        if (columnIndex === 0) { // Date
+          aValue = new Date(aValue);
+          bValue = new Date(bValue);
+          return isAscending ? aValue - bValue : bValue - aValue;
+        }
+        if (columnIndex === 2) { // Amount
+          aValue = parseFloat(aValue.replace(/KES |,/g, '')) || 0;
+          bValue = parseFloat(bValue.replace(/KES |,/g, '')) || 0;
+          return isAscending ? aValue - bValue : bValue - aValue;
+        }
+        // String (Source, Description)
+        return isAscending ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+      });
+
+      tbody.innerHTML = '';
+      rows.forEach(row => tbody.appendChild(row));
+
+      const headers = table.querySelectorAll('th');
+      headers.forEach((header, index) => {
+        const icon = header.querySelector('i');
+        if (index === columnIndex) {
+          icon.setAttribute('data-feather', isAscending ? 'chevron-up' : 'chevron-down');
+        } else {
+          icon.setAttribute('data-feather', 'chevron-down');
+        }
+      });
+      feather.replace();
+    }
+
+    // Initialize
+    updateTripLog();
+    updateOtherIncomeList();
+    updateSummary();
+    updateGoalProgress();
+  </script>
+</body>
+</html>
